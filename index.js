@@ -12,7 +12,7 @@ const readline = require('readline').createInterface({
   })
 
 //Var Area
-const build = 'v0.0.2-alpha-28_01_2020';
+const build = 'v0.0.2-alpha-05_02_2020';
 
 //Exports
 exports.config = config;
@@ -20,18 +20,19 @@ exports.isDebug = isDebug;
 
 
 //Code Area
-
+console.log('+-+-+-+-+-+-+-+-+-+-+-+-+');
+console.log('|K|u|r|a|m|a|S|e|n|p|a|i|');
+console.log('+-+-+-+-+-+-+-+-+-+-+-+-+');
 if(config.token != "") {
     client.login(config.token);
     client.once('ready', () => {
-        console.log('+-+-+-+-+-+-+-+-+-+-+-+-+');
-        console.log('|K|u|r|a|m|a|S|e|n|p|a|i|');
-        console.log('+-+-+-+-+-+-+-+-+-+-+-+-+');
         console.log('KuramaSenpai Discord bot started at ' + new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '') + "!");
         console.log('Version: ' + build);
         //console.log('Commands: ' + Object.keys(commandManager.cmdlist).length);
-        console.log('Created by DevDenis | TeamDarkPheonix. Copyright 2019')
+        console.log('Created by DevDenis | TeamDarkPheonix. Copyright 2020')
         console.log('');
+        console.log('Type help for help!');
+        console.log(' ');
         if(isDebug) {
             console.log('Debug is activated. All events will be printed!');
         }
@@ -39,7 +40,11 @@ if(config.token != "") {
         
     });
 } else {
-    setup();
+  console.log('Version: ' + build);
+  console.log('Created by DevDenis | TeamDarkPheonix. Copyright 2019')
+  console.log('');
+  logger.debug('Starting setup! No configuration found!')
+  setup();
 }
 
 function setup(){
@@ -60,6 +65,7 @@ function setup(){
               fs.writeFileSync('config.json', JSON.stringify(config));
               console.log('')
               console.log('Setup is completed please restart KuramaSenpai to get started!');
+              logger.debug('Setup configuration: ' + JSON.stringify(config));
             })
           })
         })
