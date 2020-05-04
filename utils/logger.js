@@ -23,8 +23,15 @@ function debug(msg){
     }
 }
 
+function command(user, cmd, answer){
+    if(index.isCommandListening) {
+        console.log(date + ' [CMD] ' + 'User: ' + user + ' || CMD: ' + cmd + ' || Answer: ' + answer);
+    }
+}
+
 exports.log = log;
 exports.info = info;
 exports.warn = warn;
 exports.err = err;
 exports.debug = debug;
+exports.command = command;

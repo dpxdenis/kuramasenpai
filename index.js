@@ -1,23 +1,26 @@
 //Main Area
+const fs = require('fs');
 const Discord = require('discord.js');
 const client = new Discord.Client();
-const fs = require('fs');
+client.commands = new Discord.Collection();
+var commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 const file = fs.readFileSync('config.json');
 const config = JSON.parse(file);
 const logger = require('./utils/logger.js');
 const isDebug = config.debug;
+const isCommandListening = config.commandlistening;
 const readline = require('readline').createInterface({
     input: process.stdin,
     output: process.stdout
   })
 
 //Var Area
-const build = 'v0.0.2-alpha-05_02_2020';
+const build = 'v0.0.3-alpha-04_05_2020';
 
 //Exports
 exports.config = config;
 exports.isDebug = isDebug;
-
+exports.isCommandListening = isCommandListening;
 
 //Code Area
 console.log('+-+-+-+-+-+-+-+-+-+-+-+-+');
@@ -28,14 +31,15 @@ if(config.token != "") {
     client.once('ready', () => {
         console.log('KuramaSenpai Discord bot started at ' + new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '') + "!");
         console.log('Version: ' + build);
-        //console.log('Commands: ' + Object.keys(commandManager.cmdlist).length);
+        console.log('Commands: ' + commandFiles.length);
         console.log('Created by DevDenis | TeamDarkPheonix. Copyright 2020')
         console.log('');
         console.log('Type help for help!');
         console.log(' ');
-        if(isDebug) {
-            console.log('Debug is activated. All events will be printed!');
-        }
+        logger.debug('Debug is activated. All events will be printed!')
+
+        importCommands();
+
         client.user.setActivity('Made by DevDenis | TeamDarkPheonix', { type: 'STREAMING', url: 'http://twitch.tv/devdenis' });
         
     });
@@ -47,8 +51,13 @@ if(config.token != "") {
   setup();
 }
 
+/**
+ * Will start the KuramaSenpai Setup and create the config.
+ */
 function setup(){
     console.log('Welcome to the setup for KuramaSenpai!');
+    config.debug = false;
+    config.commandlistening = true;
     readline.question('Please enter your DiscordBot token!\n', (token) => {
         config.token = token;
         logger.debug('Token is: ' + token);
@@ -70,11 +79,82 @@ function setup(){
           })
         })
       })
-
-
-
-
-
-
 }
+
+//CommandSetup
+function importCommands(){
+    logger.debug('Loading all Commands...')
+    for(const file of commandFiles) {
+      const command = require(`./commands/${file}`);
+      client.commands.set(command.name, command);
+      logger.debug('Loaded Command: ' + command.name)
+    }
+    logger.debug('Loaded ' + commandFiles.length + ' Commands!');
+}
+
+//Reload all Commands
+function reloadCommands(msg){
+    //Removing all Commands first
+    for(const file of commandFiles) {
+      delete require.cache[require.resolve(`./commands/${file}`)]
+    }
+    //Adds new Commands to live!
+    commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+
+    try {
+      for(const file of commandFiles) {
+      const command = require(`./commands/${file}`);
+      client.commands.set(command.name, command);
+      logger.debug('Reloaded Command: ' + command.name)
+      }
+      logger.debug('Reloaded ' + commandFiles.length + ' Commands!');
+      msg.channel.send('Reloaded ' + commandFiles.length + ' Commands!');
+    } catch (error) {
+      logger.err(error);
+      logger.err('Error while reloading all commands!')
+    }
+}
+
+exports.reloadCommands = reloadCommands;
+
+//Command Handling
+client.on('message', message => {
+  //Prevent that bots can execute commands and KuramaSenpai ignoring message without the prefix.
+  if(!message.content.startsWith(config.prefix) || message.author.bot) return;
+
+  //Do write tha reply faster then fast.
+  const reply = function(answer) {
+    message.channel.send(answer);
+  }
+
+  //Some consts.
+  const user = message.author;
+  const args = message.content.toLowerCase().slice(config.prefix.length).split(' ');
+  const commandName = args.shift().toLowerCase();
+  const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
+
+  //AntiExecuteNotFoundedCommandsWHYDONTUUSETHEHELP!!!
+  if(!command) return logger.command('User: ' + user.username + ' || Command: ' + commandName + ' not found!');
+
+  try {
+      //ForgottenArgsProtect
+      if(command.args && !args.length) {
+        var answer = 'Notwendige Argumente fehlen! So gehts richtig: ' + command.usage;
+        logger.command(user.username, commandName, answer);
+        return reply(answer)
+      }
+
+      //DontDoDieseInThaDMs!
+      if(command.guildOnly && message.channel.type !== 'text') {
+        var answer = 'Dieser Command funktioniert nicht in den DMs!';
+        logger.command(user.username, commandName, answer);
+        return reply(answer)
+      }
+
+      command.execute(message, args);
+  } catch (error) {
+    logger.err(error);
+    logger.err('User: ' + user.username + ' || Command: ' + commandName + ' || Error while executing this command.')
+  }
+})
 
