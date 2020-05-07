@@ -6,6 +6,9 @@ module.exports = {
 	args: false,
 	usage: '<cmd>',
 	guildOnly: true,
+	aliases: ['rl'],
+	needsPerm: true,
+	perm: 'admin',
 	execute(message, args) {
         if(!message.author.username.toString() === 'devdenis') {
          return logger.warn(message.author.username + ' wanted to reload me :C');   

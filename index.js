@@ -15,7 +15,7 @@ const readline = require('readline').createInterface({
   })
 
 //Var Area
-const build = 'v0.0.3-alpha-04_05_2020';
+const build = 'v0.0.4-beta-08_05_2020';
 
 //Exports
 exports.config = config;
@@ -70,11 +70,19 @@ function setup(){
             readline.question('In which channel can i post the XP notifications? (ID)\n', (answer) => {
               config.xpchannel = answer;
               logger.debug('ChannelID: ' + answer);
-              readline.close()
-              fs.writeFileSync('config.json', JSON.stringify(config));
-              console.log('')
-              console.log('Setup is completed please restart KuramaSenpai to get started!');
-              logger.debug('Setup configuration: ' + JSON.stringify(config));
+              readline.question('Which ID has your Admin role?\n', (answer) => {
+                config.adminroleid = answer;
+                logger.debug('AdminRoleID: ' + answer);
+                readline.question('Which ID has your Mod role?\n', (answer) => {
+                  config.modroleid = answer;
+                  logger.debug('ModRoleID: ' + answer);
+                  readline.close()
+                  fs.writeFileSync('config.json', JSON.stringify(config));
+                  console.log('')
+                  console.log('Setup is completed please restart KuramaSenpai to get started!');
+                  logger.debug('Setup configuration: ' + JSON.stringify(config));
+                })
+              })
             })
           })
         })
@@ -107,7 +115,7 @@ function reloadCommands(msg){
       client.commands.set(command.name, command);
       logger.debug('Reloaded Command: ' + command.name)
       }
-      logger.debug('Reloaded ' + commandFiles.length + ' Commands!');
+      logger.info('Reloaded ' + commandFiles.length + ' Commands!');
       msg.channel.send('Reloaded ' + commandFiles.length + ' Commands!');
     } catch (error) {
       logger.err(error);
@@ -120,7 +128,7 @@ exports.reloadCommands = reloadCommands;
 //Command Handling
 client.on('message', message => {
   //Prevent that bots can execute commands and KuramaSenpai ignoring message without the prefix.
-  if(!message.content.startsWith(config.prefix) || message.author.bot) return;
+  if(!message.content.startsWith(config.prefix) || message.author.bot) return checkMessage(message);
 
   //Do write tha reply faster then fast.
   const reply = function(answer) {
@@ -137,6 +145,17 @@ client.on('message', message => {
   if(!command) return logger.command('User: ' + user.username + ' || Command: ' + commandName + ' not found!');
 
   try {
+      //Permissons auf lockerer Basis
+      if(command.needsPerm) {
+        if(command.perm.toLowerCase() == 'admin' && !(message.member.roles.has(config.adminroleid))) {
+          message.delete(1000);
+          return logger.command(user.username, commandName, 'No Permissions');
+        } else if (command.perm.toLowerCase() == 'mod' && !(message.member.roles.has(config.modroleid))) {
+          message.delete(1000);
+          return logger.command(user.username, commandName, 'No Permissions');
+        }
+      }
+
       //ForgottenArgsProtect
       if(command.args && !args.length) {
         var answer = 'Notwendige Argumente fehlen! So gehts richtig: ' + command.usage;
@@ -154,7 +173,18 @@ client.on('message', message => {
       command.execute(message, args);
   } catch (error) {
     logger.err(error);
+    logger.debug(error.stack);
     logger.err('User: ' + user.username + ' || Command: ' + commandName + ' || Error while executing this command.')
   }
 })
+
+//AntiShittyAdProtectorV999
+function checkMessage(msg){
+  if(msg.content.toLowerCase().includes('discord.gg')) {
+    if (!msg.member.roles.has('224166766484520960') && !msg.member.roles.has('450337876006404097') && !msg.member.roles.has('244181814212558849')) {
+      msg.delete(1000);
+    }
+
+  }
+}
 
