@@ -1,5 +1,5 @@
 const logger = require('../utils/logger.js');
-const index = require('../index.js')
+const commandManager = require('../utils/commandmanager.js')
 module.exports = {
 	name: 'reload',
 	description: 'Reloads all commands [ADMIN].',
@@ -17,7 +17,7 @@ module.exports = {
 		var answer = 'Reloading all Commands...';
 		message.channel.send(answer);
         logger.command(message.author.username, message, answer);
-        index.reloadCommands(message);
+        commandManager.reloadCommands(message);
 
 	},
 };

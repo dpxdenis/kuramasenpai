@@ -3,42 +3,41 @@ const fs = require('fs');
 const Discord = require('discord.js');
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
-var commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
-const file = fs.readFileSync('config.json');
+const commandManager = require('./utils/commandmanager.js')
+const configJS = require('./utils/config.js');
+configJS.generateConfigFile(fs);
+const file = fs.readFileSync('config.json', {encoding: 'utf8', flag: 'a+'});
 const config = JSON.parse(file);
 const logger = require('./utils/logger.js');
 const isDebug = config.debug;
 const isCommandListening = config.commandlistening;
-const readline = require('readline').createInterface({
-    input: process.stdin,
-    output: process.stdout
-  })
 
 //Var Area
-const build = 'v0.0.4-beta-build_2';
+const build = 'v0.0.4-beta-build_3';
 
 //Exports
 exports.config = config;
 exports.isDebug = isDebug;
 exports.isCommandListening = isCommandListening;
+exports.client = client;
 
 //Code Area
 console.log('+-+-+-+-+-+-+-+-+-+-+-+-+');
 console.log('|K|u|r|a|m|a|S|e|n|p|a|i|');
 console.log('+-+-+-+-+-+-+-+-+-+-+-+-+');
-if(config.token != "") {
+if(config.token != undefined) {
     client.login(config.token);
     client.once('ready', () => {
+        logger.debug('Debug is activated. All events will be printed!')
+        commandManager.importCommands();
         console.log('KuramaSenpai Discord bot started at ' + new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '') + "!");
         console.log('Version: ' + build);
-        console.log('Commands: ' + commandFiles.length);
+        console.log('Commands: ' + commandManager.commandFiles.length);
         console.log('Created by DevDenis | TeamDarkPheonix. Copyright 2020')
         console.log('');
         console.log('Type help for help!');
         console.log(' ');
-        logger.debug('Debug is activated. All events will be printed!')
 
-        importCommands();
 
         client.user.setActivity('Made by DevDenis | TeamDarkPheonix', { type: 'STREAMING', url: 'http://twitch.tv/devdenis' });
         
@@ -48,82 +47,8 @@ if(config.token != "") {
   console.log('Created by DevDenis | TeamDarkPheonix. Copyright 2019')
   console.log('');
   logger.debug('Starting setup! No configuration found!')
-  setup();
+  configJS.setup(config, logger, fs);
 }
-
-/**
- * Will start the KuramaSenpai Setup and create the config.
- */
-function setup(){
-    console.log('Welcome to the setup for KuramaSenpai!');
-    config.debug = false;
-    config.commandlistening = true;
-    readline.question('Please enter your DiscordBot token!\n', (token) => {
-        config.token = token;
-        logger.debug('Token is: ' + token);
-        readline.question('Which prefix for the commands do u want?\n', (answer) => {
-          config.prefix = answer;
-          logger.debug('Prefix is: ' + answer);
-          readline.question('Which XP multiplier do u want? nextlevel=level*multiplier\n', (answer) => {
-            config.xpvalue = answer;
-            logger.debug('XP-Mulitplier: ' + answer);
-            readline.question('In which channel can i post the XP notifications? (ID)\n', (answer) => {
-              config.xpchannel = answer;
-              logger.debug('ChannelID: ' + answer);
-              readline.question('Which ID has your Admin role?\n', (answer) => {
-                config.adminroleid = answer;
-                logger.debug('AdminRoleID: ' + answer);
-                readline.question('Which ID has your Mod role?\n', (answer) => {
-                  config.modroleid = answer;
-                  logger.debug('ModRoleID: ' + answer);
-                  readline.close()
-                  fs.writeFileSync('config.json', JSON.stringify(config));
-                  console.log('')
-                  console.log('Setup is completed please restart KuramaSenpai to get started!');
-                  logger.debug('Setup configuration: ' + JSON.stringify(config));
-                })
-              })
-            })
-          })
-        })
-      })
-}
-
-//CommandSetup
-function importCommands(){
-    logger.debug('Loading all Commands...')
-    for(const file of commandFiles) {
-      const command = require(`./commands/${file}`);
-      client.commands.set(command.name, command);
-      logger.debug('Loaded Command: ' + command.name)
-    }
-    logger.debug('Loaded ' + commandFiles.length + ' Commands!');
-}
-
-//Reload all Commands
-function reloadCommands(msg){
-    //Removing all Commands first
-    for(const file of commandFiles) {
-      delete require.cache[require.resolve(`./commands/${file}`)]
-    }
-    //Adds new Commands to live!
-    commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
-
-    try {
-      for(const file of commandFiles) {
-      const command = require(`./commands/${file}`);
-      client.commands.set(command.name, command);
-      logger.debug('Reloaded Command: ' + command.name)
-      }
-      logger.info('Reloaded ' + commandFiles.length + ' Commands!');
-      msg.channel.send('Reloaded ' + commandFiles.length + ' Commands!');
-    } catch (error) {
-      logger.err(error);
-      logger.err('Error while reloading all commands!')
-    }
-}
-
-exports.reloadCommands = reloadCommands;
 
 //Command Handling
 client.on('message', message => {
