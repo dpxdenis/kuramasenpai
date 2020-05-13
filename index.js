@@ -15,7 +15,7 @@ const readline = require('readline').createInterface({
   })
 
 //Var Area
-const build = 'v0.0.4-beta-08_05_2020';
+const build = 'v0.0.4-beta-build_2';
 
 //Exports
 exports.config = config;
