@@ -8,10 +8,11 @@ var onlineUsers = [];
 function giveXP(userid, type) {
     if(type == 'text') {
         var wonxp = Math.floor(Math.random() * 20) + 1;
-        var woncoins = Math.floor(Math.random() * 9) + 1;
-    } else {
-        var wonxp = Math.floor(Math.random() * 10) + 1;
         var woncoins = Math.floor(Math.random() * 4) + 1;
+
+    } else {
+        var wonxp = Math.floor(Math.random() * 50) + 1;
+        var woncoins = Math.floor(Math.random() * 9) + 1;
     }
     var fetchedUser = index.client.users.get(userid); 
     if(!xpFile[userid]) {
@@ -85,10 +86,10 @@ function giveXP(userid, type) {
         }
     }
     if(type == 'text') {
-        logger.xp(fetchedUser.tag + ' got ' + wonxp + ' xp!');
+        logger.xp(fetchedUser.tag + ' got ' + wonxp + ' xp! LvL:' + user.level + ' NextLvL: ' + ((user.level * index.config.xpvalue) - user.xp));
         logger.coins(fetchedUser.tag + ' got ' + woncoins + ' coins!');
     } else {
-        logger.xpVoice(fetchedUser.tag + ' got ' + wonxp + ' xp!');
+        logger.xpVoice(fetchedUser.tag + ' got ' + wonxp + ' xp! LvL:' + user.level + ' NextLvL: ' + ((user.level * index.config.xpvalue) - user.xp));
         logger.coinsVoice(fetchedUser.tag + ' got ' + woncoins + ' coins!');
     }
 
@@ -110,7 +111,13 @@ function countdownVoiceXP() {
     }
 }
 
+function startUpAddUsers(member, id) {
+    onlineUsers.push(id);
+    logger.debug('Added ' + member + ' to OnlineUsersXP!')
+}
+
 exports.giveXP = giveXP;
 exports.onlineUsers = onlineUsers;
 exports.countdownVoiceXP = countdownVoiceXP;
 exports.xpFile = xpFile;
+exports.startUpAddUsers = startUpAddUsers;

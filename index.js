@@ -11,7 +11,7 @@ const xpManager = require('./utils/xpmanager.js');
 const logger = require('./utils/logger.js');
 const isDebug = config.debug;
 const isCommandListening = config.commandlistening;
-const build = 'v0.0.6-beta-build_2';
+const build = 'v0.0.6-beta-build_3';
 //Exports
 exports.config = config;
 exports.isDebug = isDebug;
@@ -36,9 +36,10 @@ if(config.token != undefined) {
     console.log('Type help for help!');
     console.log(' ');
     client.user.setActivity('Made by DevDenis | TeamDarkPheonix', { type: 'STREAMING', url: 'http://twitch.tv/devdenis' });
+    getAllVoiceUsers();
     var timer = setInterval(function() {
       xpManager.countdownVoiceXP();
-  }, 1000 * 60 * 10);
+  }, 1000 * 60 * 5);
   //Milliseconds * seconds * minutes
   });
 } else {
@@ -60,14 +61,43 @@ client.on('message', message => {
 client.on('voiceStateUpdate', (oldMember, newMember) => {
   let newUserChannel = newMember.voiceChannel;
   let oldUserChannel = oldMember.voiceChannel;
+  var fetchedUser = client.users.get(newMember.id); 
+  var onlineUsersList = []
+
+  if(newMember.client.bot || oldMember.client.bot) return;
 
   if(oldUserChannel === undefined && newUserChannel !== undefined) {
-      //User joins
-      xpManager.onlineUsers.push(newMember.id);
+    //User joins
+    xpManager.onlineUsers.push(newMember.id);
+    logger.debug(fetchedUser.tag + ' joined Voice!');
+    for (let i = 0; i < xpManager.onlineUsers.length; i++) {
+      onlineUsersList.push(client.users.get(xpManager.onlineUsers[i]).tag);
+    }
+    logger.debug('Online: ' + xpManager.onlineUsers.length);
+    logger.debug('Users: ' + onlineUsersList)
   } else if(newUserChannel === undefined) {
-      //User leaves
-      if(xpManager.onlineUsers.includes(newMember.id)) {
-        xpManager.onlineUsers.splice(xpManager.onlineUsers.indexOf(newMember.id),1)
+    //User leaves
+    if(xpManager.onlineUsers.includes(newMember.id)) {
+      xpManager.onlineUsers.splice(xpManager.onlineUsers.indexOf(newMember.id),1)
+      logger.debug(fetchedUser.tag + ' lefted Voice!');
+      for (let i = 0; i < xpManager.onlineUsers.length; i++) {
+        onlineUsersList.push(client.users.get(xpManager.onlineUsers[i]).tag);
       }
+      logger.debug('Online: ' + xpManager.onlineUsers.length);
+      logger.debug('Users: ' + onlineUsersList)
+    }
   }
 });
+
+function getAllVoiceUsers() {
+  var voiceChannels = client.channels.filter(c => c.type === 'voice')
+  for(const [cID, c] of voiceChannels) {
+    for(const [memberID, member] of c.members) {
+      var fetchedUser = client.users.get(memberID); 
+      if(!fetchedUser.bot) {
+        xpManager.startUpAddUsers(fetchedUser.tag, memberID);
+      }
+    }
+  }
+
+}
