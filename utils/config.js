@@ -1,3 +1,5 @@
+const logger = require('./logger.js')
+
 const readline = require('readline').createInterface({
     input: process.stdin,
     output: process.stdout
@@ -22,17 +24,21 @@ function setup(config, logger, fs){
             readline.question('In which channel can i post the XP notifications? (ID)\n', (answer) => {
               config.xpchannel = answer;
               logger.debug('ChannelID: ' + answer);
-              readline.question('Which ID has your Admin role?\n', (answer) => {
-                config.adminroleid = answer;
-                logger.debug('AdminRoleID: ' + answer);
-                readline.question('Which ID has your Mod role?\n', (answer) => {
-                  config.modroleid = answer;
-                  logger.debug('ModRoleID: ' + answer);
-                  readline.close()
-                  fs.writeFileSync('config.json', JSON.stringify(config));
-                  console.log('')
-                  console.log('Setup is completed please restart KuramaSenpai to get started!');
-                  logger.debug('Setup configuration: ' + JSON.stringify(config));
+              readline.question('Which Coins multiplier do u want?\n', (answer) => {
+                config.coinsvalue = answer;
+                logger.debug('CoinsValue: ' + answer);
+                readline.question('Which ID has your Admin role?\n', (answer) => {
+                  config.adminroleid = answer;
+                  logger.debug('AdminRoleID: ' + answer);
+                  readline.question('Which ID has your Mod role?\n', (answer) => {
+                    config.modroleid = answer;
+                    logger.debug('ModRoleID: ' + answer);
+                    readline.close()
+                    fs.writeFileSync('config.json', JSON.stringify(config));
+                    console.log('')
+                    console.log('Setup is completed please restart KuramaSenpai to get started!');
+                    logger.debug('Setup configuration: ' + JSON.stringify(config));
+                  })
                 })
               })
             })
@@ -42,12 +48,17 @@ function setup(config, logger, fs){
 }
 
 /**
- * Generates the config file if its not exists.
+ * Generates the config files if its not exists.
  * @param {*} fs 
  */
 function generateConfigFile(fs) {
     if(!fs.existsSync('config.json')) {
       fs.writeFileSync('config.json', '{}', 'utf8');
+      logger.debug('Generated config file!');
+    }
+    if(!fs.existsSync('xp.json')) {
+      fs.writeFileSync('xp.json', '{}', 'utf8');
+      logger.debug('Generated xp file!');
     }
   }
 

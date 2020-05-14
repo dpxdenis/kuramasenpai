@@ -5,12 +5,13 @@ client.commands = new Discord.Collection();
 const commandManager = require('./utils/commandmanager.js')
 const configJS = require('./utils/config.js');
 configJS.generateConfigFile(fs);
-const file = fs.readFileSync('config.json', {encoding: 'utf8', flag: 'a+'});
-const config = JSON.parse(file);
+const configFile = fs.readFileSync('config.json', {encoding: 'utf8', flag: 'a+'});
+const config = JSON.parse(configFile);
+const xpManager = require('./utils/xpmanager.js');
 const logger = require('./utils/logger.js');
 const isDebug = config.debug;
 const isCommandListening = config.commandlistening;
-const build = 'v0.0.5-beta-build_1';
+const build = 'v0.0.6-beta-build_1';
 //Exports
 exports.config = config;
 exports.isDebug = isDebug;
@@ -35,6 +36,10 @@ if(config.token != undefined) {
     console.log('Type help for help!');
     console.log(' ');
     client.user.setActivity('Made by DevDenis | TeamDarkPheonix', { type: 'STREAMING', url: 'http://twitch.tv/devdenis' });
+    var timer = setInterval(function() {
+      xpManager.countdownVoiceXP();
+  }, 1000 * 60 * 10);
+  //Milliseconds * seconds * minutes
   });
 } else {
   console.log('Version: ' + build);
@@ -51,3 +56,20 @@ client.on('message', message => {
   commandManager.handle(message);
 })
 
+//XP for Voice!
+client.on('voiceStateUpdate', (oldMember, newMember) => {
+  let newUserChannel = newMember.voiceChannel;
+  let oldUserChannel = oldMember.voiceChannel;
+
+  if(oldUserChannel === undefined && newUserChannel !== undefined) {
+      //User joins
+      xpManager.onlineUsers.push(newMember.id);
+      logger.debug(xpManager.onlineUsers);
+  } else if(newUserChannel === undefined) {
+      //User leaves
+      if(xpManager.onlineUsers.includes(newMember.id)) {
+        xpManager.onlineUsers.splice(xpManager.onlineUsers.indexOf(newMember.id),1)
+      }
+      logger.debug(xpManager.onlineUsers);
+  }
+});

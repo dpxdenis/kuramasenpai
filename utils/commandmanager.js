@@ -2,6 +2,7 @@ const index = require('../index.js')
 const fs = require('fs');
 const logger = require('../utils/logger.js');
 var commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+const xpmanager = require('./xpmanager.js');
 
 function importCommands(){
     logger.debug('Loading all Commands...')
@@ -88,12 +89,14 @@ function handle(message) {
 
 //AntiShittyAdProtectorV999
 function checkMessage(msg){
+  if(msg.author.bot) return;
   if(msg.content.toLowerCase().includes('discord.gg')) {
     if (!msg.member.roles.has('224166766484520960') && !msg.member.roles.has('450337876006404097') && !msg.member.roles.has('244181814212558849')) {
-      msg.delete(1000);
+      return msg.delete(1000);
     }
 
   }
+  xpmanager.giveXP(msg.author.id, 'text');
 }
 
 exports.commandFiles = commandFiles;
