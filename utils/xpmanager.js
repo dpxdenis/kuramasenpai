@@ -36,7 +36,7 @@ function giveXP(userid, type) {
         var currentLvL = user.level;
         nextLvL = user.level * index.config.xpvalue;
         var difference = nextLvL - currentXP;
-        const embed = {
+        var embed = {
             color: 0xff0000,
             title: fetchedUser.tag,
             author: {
