@@ -77,7 +77,7 @@ function giveXP(userid, type) {
                 ]
             };
         }
-
+        index.client.channels.get(index.config.xpchannel).send('<@' + userid + '>');
         index.client.channels.get(index.config.xpchannel).send({embed: embed});
         if(type == 'text') {
             logger.xplvlup(fetchedUser.tag + ' levelup! Level: ' + currentLvL);
