@@ -11,7 +11,7 @@ const xpManager = require('./utils/xpmanager.js');
 const logger = require('./utils/logger.js');
 const isDebug = config.debug;
 const isCommandListening = config.commandlistening;
-const build = 'v0.0.6-beta-build_1';
+const build = 'v0.0.6-beta-build_2';
 //Exports
 exports.config = config;
 exports.isDebug = isDebug;
@@ -64,12 +64,10 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
   if(oldUserChannel === undefined && newUserChannel !== undefined) {
       //User joins
       xpManager.onlineUsers.push(newMember.id);
-      logger.debug(xpManager.onlineUsers);
   } else if(newUserChannel === undefined) {
       //User leaves
       if(xpManager.onlineUsers.includes(newMember.id)) {
         xpManager.onlineUsers.splice(xpManager.onlineUsers.indexOf(newMember.id),1)
       }
-      logger.debug(xpManager.onlineUsers);
   }
 });
