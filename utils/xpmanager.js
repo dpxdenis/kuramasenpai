@@ -31,7 +31,7 @@ function giveXP(userid, type) {
 
     if(nextLvL <= user.xp) {
         user.level++;
-
+        user.xp = 0;
         var currentXP = user.xp;
         var currentLvL = user.level;
         nextLvL = user.level * index.config.xpvalue;
