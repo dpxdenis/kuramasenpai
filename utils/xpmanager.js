@@ -15,6 +15,7 @@ function giveXP(userid, type) {
         var woncoins = Math.floor(Math.random() * 9) + 1;
     }
     var fetchedUser = index.client.users.get(userid); 
+    if(fetchedUser.bot) return;
     if(!xpFile[userid]) {
         xpFile[userid] = {
             xp: 0,
@@ -84,6 +85,8 @@ function giveXP(userid, type) {
         } else {
             logger.xplvlupVoice(fetchedUser.tag + ' levelup! Level: ' + currentLvL);
         }
+
+        index.client.channels.get(index.config.xpchannel).send(generateScoreboard());
     }
     if(type == 'text') {
         logger.xp(fetchedUser.tag + ' got ' + wonxp + ' xp! LvL:' + user.level + ' NextLvL: ' + ((user.level * index.config.xpvalue) - user.xp));
@@ -92,7 +95,6 @@ function giveXP(userid, type) {
         logger.xpVoice(fetchedUser.tag + ' got ' + wonxp + ' xp! LvL:' + user.level + ' NextLvL: ' + ((user.level * index.config.xpvalue) - user.xp));
         logger.coinsVoice(fetchedUser.tag + ' got ' + woncoins + ' coins!');
     }
-
     saveFile();
 }
 
@@ -116,8 +118,40 @@ function startUpAddUsers(member, id) {
     logger.debug('Added ' + member + ' to OnlineUsersXP!')
 }
 
+function generateScoreboard(){
+    var scoreboard = [];
+    var allUserIDs = Object.keys(xpFile);
+    allUserIDs.forEach(function(key) {
+        scoreboard.push(key + ':' + xpFile[key].level);
+    });
+    scoreboard.sort(function(a, b){return b.toString().split(':')[1]-a.toString().split(':')[1]});
+    const embed = {
+        color: 0xff0000,
+        title: 'Scoreboard',
+        author: {
+            name: 'KuramaXP',
+            icon_url: 'http://devdenis.bplaced.net/sharingan.png'
+        },
+        timestamp: new Date(),
+        fields:
+        [
+        ]
+    };
+    for(var i = 0; i < scoreboard.length; i++) {
+        var fetchedUser = index.client.users.get(scoreboard[i].toString().split(':')[0]);
+        if(i+1 < scoreboard.length) {
+            embed.fields.push({name: ((i+1) + '.'), value: (fetchedUser.tag + ' || Level: ' + scoreboard[i].toString().split(':')[1])},);
+        } else {
+            embed.fields.push({name: ((i+1) + '.'), value: (fetchedUser.tag + ' || Level: ' + scoreboard[i].toString().split(':')[1])});
+        }
+    }
+    logger.debug('Sent scoreboard!');
+    return {embed: embed};
+}
+
 exports.giveXP = giveXP;
 exports.onlineUsers = onlineUsers;
 exports.countdownVoiceXP = countdownVoiceXP;
 exports.xpFile = xpFile;
 exports.startUpAddUsers = startUpAddUsers;
+exports.generateScoreboard = generateScoreboard;

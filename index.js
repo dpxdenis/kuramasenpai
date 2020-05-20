@@ -11,7 +11,7 @@ const xpManager = require('./utils/xpmanager.js');
 const logger = require('./utils/logger.js');
 const isDebug = config.debug;
 const isCommandListening = config.commandlistening;
-const build = 'v0.0.6-beta-build_6';
+const build = 'v0.0.7-beta-build_1';
 //Exports
 exports.config = config;
 exports.isDebug = isDebug;
