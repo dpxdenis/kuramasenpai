@@ -127,22 +127,36 @@ function generateScoreboard(){
     scoreboard.sort(function(a, b){return b.toString().split(':')[1]-a.toString().split(':')[1]});
     const embed = {
         color: 0xff0000,
-        title: 'Scoreboard',
+        title: 'Scoreboard Top 10',
         author: {
             name: 'KuramaXP',
             icon_url: 'http://devdenis.bplaced.net/sharingan.png'
+        },
+        thumbnail: {
+            url:  index.client.users.get('536292484838457344').avatarURL
         },
         timestamp: new Date(),
         fields:
         [
         ]
     };
-    for(var i = 0; i < scoreboard.length; i++) {
-        var fetchedUser = index.client.users.get(scoreboard[i].toString().split(':')[0]);
-        if(i+1 < scoreboard.length) {
-            embed.fields.push({name: ((i+1) + '.'), value: (fetchedUser.tag + ' || Level: ' + scoreboard[i].toString().split(':')[1])},);
-        } else {
-            embed.fields.push({name: ((i+1) + '.'), value: (fetchedUser.tag + ' || Level: ' + scoreboard[i].toString().split(':')[1])});
+    if(scoreboard.length < 10) {
+        for(var i = 0; i < scoreboard.length; i++) {
+            var fetchedUser = index.client.users.get(scoreboard[i].toString().split(':')[0]);
+            if(i+1 < scoreboard.length) {
+                embed.fields.push({name: 'Platz ' + ((i+1) + '.'), value: (fetchedUser.tag + ' || Level: ' + scoreboard[i].toString().split(':')[1])},);
+            } else {
+                embed.fields.push({name: 'Platz ' + ((i+1) + '.'), value: (fetchedUser.tag + ' || Level: ' + scoreboard[i].toString().split(':')[1])});
+            }
+        }
+    } else {
+        for(var i = 0; i < 10; i++) {
+            var fetchedUser = index.client.users.get(scoreboard[i].toString().split(':')[0]);
+            if(i+1 < 10) {
+                embed.fields.push({name: 'Platz ' + ((i+1) + '.'), value: (fetchedUser.tag + ' || Level: ' + scoreboard[i].toString().split(':')[1])},);
+            } else {
+                embed.fields.push({name: 'Platz ' + ((i+1) + '.'), value: (fetchedUser.tag + ' || Level: ' + scoreboard[i].toString().split(':')[1])});
+            }
         }
     }
     logger.debug('Sent scoreboard!');
