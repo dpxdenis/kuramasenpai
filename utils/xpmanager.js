@@ -7,12 +7,12 @@ var onlineUsers = [];
 
 function giveXP(userid, type) {
     if(type == 'text') {
-        var wonxp = Math.floor(Math.random() * 20) + 1;
-        var woncoins = Math.floor(Math.random() * 4) + 1;
+        var wonxp = Math.floor(Math.random() * Math.round(index.config.xpvalue / 5)) + 1;
+        var woncoins = Math.floor(Math.random() * 10) + 1;
 
     } else {
-        var wonxp = Math.floor(Math.random() * 50) + 1;
-        var woncoins = Math.floor(Math.random() * 9) + 1;
+        var wonxp = Math.floor(Math.random() * index.config.xpvalue) + 1;
+        var woncoins = Math.floor(Math.random() * 20) + 1;
     }
     var fetchedUser = index.client.users.get(userid); 
     if(fetchedUser.bot) return;
