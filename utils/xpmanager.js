@@ -163,9 +163,27 @@ function generateScoreboard(){
     return {embed: embed};
 }
 
+function getUserEntry(userid) {
+    return xpFile[userid];
+}
+
+function generateAccountIfEmpty(userid) {
+    var fetchedUser = index.client.users.get(userid); 
+    if(fetchedUser.bot) return;
+    if(!xpFile[userid]) {
+        xpFile[userid] = {
+            xp: 0,
+            level: 1,
+            coins: 50
+        }
+    }
+}
+
 exports.giveXP = giveXP;
 exports.onlineUsers = onlineUsers;
 exports.countdownVoiceXP = countdownVoiceXP;
 exports.xpFile = xpFile;
 exports.startUpAddUsers = startUpAddUsers;
 exports.generateScoreboard = generateScoreboard;
+exports.getUserEntry = getUserEntry;
+exports.generateAccountIfEmpty = generateAccountIfEmpty;
