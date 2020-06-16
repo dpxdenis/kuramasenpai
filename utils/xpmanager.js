@@ -5,15 +5,23 @@ var xpFileRaw = fs.readFileSync('xp.json', {encoding: 'utf8', flag: 'a+'});
 var xpFile = JSON.parse(xpFileRaw);
 var onlineUsers = [];
 
-function giveXP(userid, type) {
-    if(type == 'text') {
-        var wonxp = Math.floor(Math.random() * Math.round(index.config.xpvalue / 5)) + 1;
-        var woncoins = Math.floor(Math.random() * 10) + 1;
-
+function giveXP(userid, type, value) {
+    var wonxp;
+    var woncoins;
+    if(value != null) {
+        wonxp = value;
+        woncoins = Math.floor(Math.random() * 20) + 1;
     } else {
-        var wonxp = Math.floor(Math.random() * index.config.xpvalue) + 1;
-        var woncoins = Math.floor(Math.random() * 20) + 1;
+        if(type == 'text') {
+            wonxp = Math.floor(Math.random() * Math.round(index.config.xpvalue / 5)) + 1;
+            woncoins = Math.floor(Math.random() * 5) + 1;
+    
+        } else {
+            wonxp = Math.floor(Math.random() * index.config.xpvalue) + 1;
+            woncoins = Math.floor(Math.random() * 20) + 1;
+        }
     }
+
     var fetchedUser = index.client.users.get(userid); 
     if(fetchedUser.bot) return;
     if(!xpFile[userid]) {
@@ -31,8 +39,8 @@ function giveXP(userid, type) {
     
 
     if(nextLvL <= user.xp) {
+        user.xp = (user.xp - nextLvL);
         user.level++;
-        user.xp = 0;
         var currentXP = user.xp;
         var currentLvL = user.level;
         nextLvL = user.level * index.config.xpvalue;
@@ -109,7 +117,7 @@ function countdownVoiceXP() {
         if(i == 0 && onlineUsers.length > 0) {
             logger.xpVoice('Online users in voice: ' + onlineUsers.length)
         }
-        giveXP(onlineUsers[i], 'voice');
+        giveXP(onlineUsers[i], 'voice', null);
     }
 }
 

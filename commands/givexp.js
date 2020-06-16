@@ -33,10 +33,7 @@ module.exports = {
                 answer = 'ALL';
             } else if (args[0].toString().toLowerCase() == 'voice') {
                 for(var i = 0; i < xpmananger.onlineUsers.length; i++) {
-                    xpmananger.generateAccountIfEmpty(xpmananger.onlineUsers[i]);
-                    var user = xpmananger.getUserEntry(xpmananger.onlineUsers[i]);
-                    user.xp += args[1];
-                    xpmananger.giveXP(xpmananger.onlineUsers[i], 'voice');
+                    xpmananger.giveXP(xpmananger.onlineUsers[i], 'voice', args[1]);
                 }
                 answer = 'Alle im Voice channel haben ' + args[1] + ' xp geschenkt bekommen!';
             } else {

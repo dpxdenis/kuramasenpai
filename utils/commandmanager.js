@@ -96,7 +96,7 @@ function checkMessage(msg){
     }
 
   }
-  xpmanager.giveXP(msg.author.id, 'text');
+  xpmanager.giveXP(msg.author.id, 'text', null);
 }
 
 exports.commandFiles = commandFiles;
