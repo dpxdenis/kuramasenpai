@@ -1,6 +1,6 @@
 const fs = require('fs');
 const index = require('../index.js');
-const logger = require('./logger.js')
+const logger = require('./logger.js');
 var xpFileRaw = fs.readFileSync('xp.json', {encoding: 'utf8', flag: 'a+'});
 var xpFile = JSON.parse(xpFileRaw);
 var onlineUsers = [];
@@ -9,7 +9,7 @@ function giveXP(userid, type, value) {
     var wonxp;
     var woncoins;
     if(value != null) {
-        wonxp = value;
+        wonxp = parseInt(value);
         woncoins = Math.floor(Math.random() * 20) + 1;
     } else {
         if(type == 'text') {
@@ -17,7 +17,7 @@ function giveXP(userid, type, value) {
             woncoins = Math.floor(Math.random() * 5) + 1;
     
         } else {
-            wonxp = Math.floor(Math.random() * index.config.xpvalue) + 1;
+            wonxp = Math.floor(Math.random() * Math.round(index.config.xpvalue / 3)) + 1;
             woncoins = Math.floor(Math.random() * 20) + 1;
         }
     }
@@ -34,12 +34,12 @@ function giveXP(userid, type, value) {
     var user = xpFile[userid];
     var nextLvL = user.level * index.config.xpvalue;
     
-    user.xp += wonxp;
-    user.coins += woncoins;
+    user.xp = parseInt(user.xp) + wonxp;
+    user.coins = parseInt(user.coins) + woncoins;
     
 
     if(nextLvL <= user.xp) {
-        user.xp = (user.xp - nextLvL);
+        user.xp = parseInt(user.xp) - nextLvL;
         user.level++;
         var currentXP = user.xp;
         var currentLvL = user.level;

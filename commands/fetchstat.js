@@ -12,7 +12,7 @@ module.exports = {
 	needsPerm: false,
 	execute(message, args) {
         var answer = 'Du musst erstmal xp bekommen um sie abzufragen!';
-        var id = args[0].toString().replace('<@','').toString().replace('>','');
+        var id = args[0].toString().replace('<@','').toString().replace('>','').replace('!','').toString();
         var fetchedUser = index.client.users.get(id);
         if (args.length == 1) {
             if(xpManager.xpFile[id] != undefined) {

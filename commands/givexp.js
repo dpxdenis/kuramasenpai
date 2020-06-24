@@ -37,7 +37,10 @@ module.exports = {
                 }
                 answer = 'Alle im Voice channel haben ' + args[1] + ' xp geschenkt bekommen!';
             } else {
-                answer = 'NOT VOICE & NOT ALL';
+                answer = 'Du gönnst ' + args[0] + ' ' + args[1] + ' XP!';
+                var id = args[0].toString().replace('<@','').toString().replace('>','').replace('!','').toString();
+                var fetchedUser = index.client.users.get(id);
+                xpmananger.giveXP(id, 'voice', args[1]);
             }
         } else {
             answer = 'args else < 2' + 'LENG: ' + args.length + ' IS:' + Number.isInteger(args[1]);
