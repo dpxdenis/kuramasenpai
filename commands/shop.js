@@ -25,9 +25,9 @@ const shop = {
 
 module.exports = {
 	name: 'shop',
-	description: 'Pong! I luv thissss.',
+	description: 'Zeigt dir den aktuellen Shop an',
 	args: false,
-	usage: 'Zeigt dir den aktuellen Shop an',
+	usage: '<cmd>',
 	guildOnly: true,
 	needsPerm: false,
 	execute(message, args) {

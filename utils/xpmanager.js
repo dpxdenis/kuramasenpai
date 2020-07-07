@@ -13,11 +13,11 @@ function giveXP(userid, type, value) {
         woncoins = Math.floor(Math.random() * 20) + 1;
     } else {
         if(type == 'text') {
-            wonxp = Math.floor(Math.random() * Math.round(index.config.xpvalue / 5)) + 1;
+            wonxp = Math.floor(Math.random() * Math.round(index.config.xpvalue / 10)) + 1;
             woncoins = Math.floor(Math.random() * 5) + 1;
     
         } else {
-            wonxp = Math.floor(Math.random() * Math.round(index.config.xpvalue / 3)) + 1;
+            wonxp = Math.floor(Math.random() * Math.round(index.config.xpvalue / 5)) + 1;
             woncoins = Math.floor(Math.random() * 20) + 1;
         }
     }
