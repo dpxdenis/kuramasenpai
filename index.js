@@ -11,7 +11,7 @@ const xpManager = require('./utils/xpmanager.js');
 const logger = require('./utils/logger.js');
 const isDebug = config.debug;
 const isCommandListening = config.commandlistening;
-const build = 'v0.3-beta-build_1-HOTFIX';
+const build = 'v0.3-beta-build_2-HOTFIX';
 //Exports
 exports.config = config;
 exports.isDebug = isDebug;

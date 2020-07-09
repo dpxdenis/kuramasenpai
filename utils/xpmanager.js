@@ -21,8 +21,9 @@ function giveXP(userid, type, value) {
             woncoins = randomValue(index.config.coinrate_voice);
         }
     }
-
+    
     var fetchedUser = index.client.users.get(userid); 
+    if(fetchedUser.bot) return;
     generateAccountIfEmpty(userid);
     var user = xpFile[userid];
     var nextLvL = parseInt(user.level * index.config.xpvalue);
@@ -150,8 +151,6 @@ function getUserEntry(userid) {
 }
 
 function generateAccountIfEmpty(userid) {
-    var fetchedUser = index.client.users.get(userid); 
-    if(fetchedUser.bot) return;
     if(!xpFile[userid]) {
         xpFile[userid] = {
             xp: 0,
