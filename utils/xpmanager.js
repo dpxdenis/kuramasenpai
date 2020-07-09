@@ -8,18 +8,17 @@ var onlineUsers = [];
 function giveXP(userid, type, value) {
     var wonxp;
     var woncoins;
-    
     if(value != null) {
         wonxp = parseInt(value);
-        woncoins = parseInt(index.config.coinrate_voice);
+        woncoins = randomValue(index.config.coinrate_voice);
     } else {
         if(type == 'text') {
-            wonxp = parseInt(index.config.xprate_text);
-            woncoins = parseInt(index.config.coinrate_text);
+            wonxp = randomValue(index.config.xprate_text);
+            woncoins = randomValue(index.config.coinrate_text);
     
         } else {
-            wonxp = parseInt(index.config.xprate_voice);
-            woncoins = parseInt(index.config.coinrate_voice);
+            wonxp = randomValue(index.config.xprate_voice);
+            woncoins = randomValue(index.config.coinrate_voice);
         }
     }
 
@@ -75,6 +74,10 @@ function giveXP(userid, type, value) {
         logger.coinsVoice(fetchedUser.tag + ' got ' + woncoins + ' coins!');
     }
     saveFile();
+}
+
+function randomValue(value) {
+    return Math.floor(Math.random() * Math.round(parseInt(value))) + 1;
 }
 
 function saveFile() {

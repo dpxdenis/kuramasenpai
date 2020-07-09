@@ -46,6 +46,10 @@ function coinsVoice(msg){
     console.log(new Date().toLocaleString() + ' [COINS][VOICE] ' + msg);
 }
 
+function update(msg){
+    console.log(new Date().toLocaleString() + ' [UPDATE] ' + msg);
+}
+
 function command(user, cmd, answer){
     if(index.isCommandListening) {
         console.log(new Date().toLocaleString() + ' [CMD] ' + 'User: ' + user + ' || CMD: ' + cmd + ' || Answer: ' + answer);
@@ -64,3 +68,4 @@ exports.coins = coins;
 exports.xpVoice = xpVoice;
 exports.coinsVoice = coinsVoice;
 exports.xplvlupVoice = xplvlupVoice;
+exports.update = update;
