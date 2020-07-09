@@ -11,7 +11,7 @@ const xpManager = require('./utils/xpmanager.js');
 const logger = require('./utils/logger.js');
 const isDebug = config.debug;
 const isCommandListening = config.commandlistening;
-const build = 'v0.1.0-beta-build_4';
+const build = 'v0.2-beta-build_1';
 //Exports
 exports.config = config;
 exports.isDebug = isDebug;
@@ -39,7 +39,7 @@ if(config.token != undefined) {
     getAllVoiceUsers();
     var timer = setInterval(function() {
       xpManager.countdownVoiceXP();
-  }, 1000 * 60 * 10);
+  }, 1000 * 60 * 5);
   //Milliseconds * seconds * minutes
   });
 } else {

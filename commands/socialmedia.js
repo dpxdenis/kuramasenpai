@@ -21,7 +21,7 @@ module.exports = {
 	name: 'socialmedia',
 	description: 'Zeigt euch alle meine Links!',
 	args: false,
-	usage: '<cmd>',
+	usage: '+socialmedia',
 	guildOnly: false,
 	aliases: ['social'],
 	needsPerm: false,

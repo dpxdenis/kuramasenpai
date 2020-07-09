@@ -27,7 +27,7 @@ module.exports = {
 	name: 'shop',
 	description: 'Zeigt dir den aktuellen Shop an',
 	args: false,
-	usage: '<cmd>',
+	usage: '+shop',
 	guildOnly: true,
 	needsPerm: false,
 	execute(message, args) {

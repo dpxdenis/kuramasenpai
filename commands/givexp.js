@@ -22,7 +22,7 @@ module.exports = {
 	name: 'givexp',
 	description: 'OHOOO FREE XP',
 	args: true,
-	usage: '<cmd> <user/voice> <amount>',
+	usage: '+givexp <@user/voice> amount',
 	guildOnly: true,
     needsPerm: true,
     perm: 'admin',

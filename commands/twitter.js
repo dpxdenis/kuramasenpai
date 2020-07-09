@@ -12,6 +12,7 @@ const twitter = {
 module.exports = {
 	name: 'twitter',
 	description: 'Zeigt meinen Twitter link!',
+	usage: '+twitter',
 	aliases: ['tw'],
 	execute(message, args) {
 		var answer = {embed: twitter};

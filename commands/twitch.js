@@ -12,6 +12,7 @@ const twitch = {
 module.exports = {
 	name: 'twitch',
 	description: 'Zeigt meinen Twitch link!',
+	usage: '+twitch',
 	aliases: ['ttv'],
 	execute(message, args) {
 		var answer = {embed: twitch};

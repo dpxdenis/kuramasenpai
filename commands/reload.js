@@ -4,7 +4,7 @@ module.exports = {
 	name: 'reload',
 	description: 'Reloads all commands [ADMIN].',
 	args: false,
-	usage: '<cmd>',
+	usage: '+reload',
 	guildOnly: true,
 	aliases: ['rl'],
 	needsPerm: true,

@@ -11,7 +11,8 @@ const insta = {
 
 module.exports = {
 	name: 'instagram',
-	description: 'Zeigt meinen Instagram link!',
+	description: 'Zeigt meinen Instagram Link!',
+	usage: '+instagram',
 	aliases: ['insta'],
 	execute(message, args) {
 		var answer = {embed: insta};

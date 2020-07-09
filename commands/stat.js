@@ -4,9 +4,9 @@ const index = require('../index.js')
 
 module.exports = {
 	name: 'stats',
-	description: 'Shows ur stats',
+	description: 'Zeigt dir deine Statistiken!',
 	args: false,
-	usage: '<cmd>',
+	usage: '+stats',
 	guildOnly: true,
 	aliases: ['xp', 'coins'],
 	needsPerm: false,

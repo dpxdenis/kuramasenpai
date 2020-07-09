@@ -12,6 +12,7 @@ const yt = {
 module.exports = {
 	name: 'youtube',
 	description: 'Zeigt meinen YouTube link!',
+	usage: '+youtube',
 	aliases: ['yt'],
 	execute(message, args) {
 		var answer = {embed: yt};

@@ -18,9 +18,8 @@ module.exports = {
 	name: 'live',
 	description: 'Postet live ankuendigung! [Admin]',
 	args: false,
-	usage: '<cmd>',
+	usage: '+live',
 	guildOnly: true,
-	aliases: ['pong'],
     needsPerm: true,
     perm: 'admin',
 	execute(message, args) {

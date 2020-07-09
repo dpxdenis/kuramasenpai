@@ -4,9 +4,9 @@ const index = require('../index.js')
 
 module.exports = {
 	name: 'getstat',
-	description: 'Shows stat from user',
+	description: 'Zeigt dir die Statistik eines anderen Users!',
 	args: true,
-	usage: '<cmd> <@user>',
+	usage: '+getstat @user',
 	guildOnly: true,
 	aliases: ['getxp', 'getcoins'],
 	needsPerm: false,

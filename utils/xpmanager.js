@@ -8,31 +8,25 @@ var onlineUsers = [];
 function giveXP(userid, type, value) {
     var wonxp;
     var woncoins;
+    
     if(value != null) {
         wonxp = parseInt(value);
-        woncoins = Math.floor(Math.random() * 20) + 1;
+        woncoins = parseInt(index.config.coinrate_voice);
     } else {
         if(type == 'text') {
-            wonxp = Math.floor(Math.random() * Math.round(index.config.xpvalue / 10)) + 1;
-            woncoins = Math.floor(Math.random() * 5) + 1;
+            wonxp = parseInt(index.config.xprate_text);
+            woncoins = parseInt(index.config.coinrate_text);
     
         } else {
-            wonxp = Math.floor(Math.random() * Math.round(index.config.xpvalue / 5)) + 1;
-            woncoins = Math.floor(Math.random() * 20) + 1;
+            wonxp = parseInt(index.config.xprate_voice);
+            woncoins = parseInt(index.config.coinrate_voice);
         }
     }
 
     var fetchedUser = index.client.users.get(userid); 
-    if(fetchedUser.bot) return;
-    if(!xpFile[userid]) {
-        xpFile[userid] = {
-            xp: 0,
-            level: 1,
-            coins: 50
-        }
-    }
+    generateAccountIfEmpty(userid);
     var user = xpFile[userid];
-    var nextLvL = user.level * index.config.xpvalue;
+    var nextLvL = parseInt(user.level * index.config.xpvalue);
     
     user.xp = parseInt(user.xp) + wonxp;
     user.coins = parseInt(user.coins) + woncoins;
@@ -41,10 +35,11 @@ function giveXP(userid, type, value) {
     if(nextLvL <= user.xp) {
         user.xp = parseInt(user.xp) - nextLvL;
         user.level++;
-        var currentXP = user.xp;
-        var currentLvL = user.level;
-        nextLvL = user.level * index.config.xpvalue;
-        var difference = nextLvL - currentXP;
+        var currentXP = parseInt(user.xp);
+        var currentLvL = parseInt(user.level);
+        nextLvL = parseInt(user.level * index.config.xpvalue);
+        var difference = parseInt(nextLvL - currentXP);
+
         var embed = {
             color: 0xff0000,
             title: fetchedUser.tag,
@@ -65,34 +60,10 @@ function giveXP(userid, type, value) {
             ]
         };
 
-        if(type == 'voice') {
-            embed = {
-                color: 0xff0000,
-                title: fetchedUser.tag,
-                author: {
-                    name: 'KuramaXP',
-                    icon_url: 'http://devdenis.bplaced.net/sharingan.png'
-                },
-                thumbnail: {
-                    url: fetchedUser.avatarURL
-                },
-                timestamp: new Date(),
-                fields:
-                [
-                    {name: 'LevelUp!', value: 'Du bischt in 1 neuz levelz! Durch chillen im VoiceChat!'},
-                    {name: 'Level: ', value: currentLvL},
-                    {name: 'Coins: ', value: user.coins},
-                    {name: 'Erforderliche XP bis zum nächsten Level', value: difference}
-                ]
-            };
-        }
         index.client.channels.get(index.config.xpchannel).send('<@' + userid + '>');
         index.client.channels.get(index.config.xpchannel).send({embed: embed});
-        if(type == 'text') {
-            logger.xplvlup(fetchedUser.tag + ' levelup! Level: ' + currentLvL);
-        } else {
-            logger.xplvlupVoice(fetchedUser.tag + ' levelup! Level: ' + currentLvL);
-        }
+
+        logger.xplvlup(fetchedUser.tag + ' levelup! Level: ' + currentLvL);
 
         index.client.channels.get(index.config.xpchannel).send(generateScoreboard());
     }

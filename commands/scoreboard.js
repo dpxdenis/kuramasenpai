@@ -3,9 +3,9 @@ const xpmanager = require('../utils/xpmanager.js');
 
 module.exports = {
 	name: 'scoreboard',
-	description: 'Shows scoreboard!',
+	description: 'Zeigt dir das aktuelle Top 10 Scoreboard!',
 	args: false,
-	usage: '<cmd>',
+	usage: '+scoreboard',
 	guildOnly: true,
 	aliases: ['sc'],
 	needsPerm: false,
