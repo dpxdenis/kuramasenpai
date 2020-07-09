@@ -155,7 +155,7 @@ function generateAccountIfEmpty(userid) {
         xpFile[userid] = {
             xp: 0,
             level: 1,
-            coins: 50
+            coins: 50,
         }
     }
 }

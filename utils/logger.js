@@ -50,6 +50,10 @@ function update(msg){
     console.log(new Date().toLocaleString() + ' [UPDATE] ' + msg);
 }
 
+function shop(msg){
+    console.log(new Date().toLocaleString() + ' [SHOP] ' + msg);
+}
+
 function command(user, cmd, answer){
     if(index.isCommandListening) {
         console.log(new Date().toLocaleString() + ' [CMD] ' + 'User: ' + user + ' || CMD: ' + cmd + ' || Answer: ' + answer);
@@ -69,3 +73,4 @@ exports.xpVoice = xpVoice;
 exports.coinsVoice = coinsVoice;
 exports.xplvlupVoice = xplvlupVoice;
 exports.update = update;
+exports.shop = shop;

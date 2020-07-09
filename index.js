@@ -1,17 +1,17 @@
 const fs = require('fs');
 const Discord = require('discord.js');
+const configJS = require('./utils/config.js');
+configJS.generateConfigFile(fs);
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
 const commandManager = require('./utils/commandmanager.js')
-const configJS = require('./utils/config.js');
-configJS.generateConfigFile(fs);
 const configFile = fs.readFileSync('config.json', {encoding: 'utf8', flag: 'a+'});
 const config = JSON.parse(configFile);
 const xpManager = require('./utils/xpmanager.js');
 const logger = require('./utils/logger.js');
 const isDebug = config.debug;
 const isCommandListening = config.commandlistening;
-const build = 'v0.3-beta-build_2-HOTFIX';
+const build = 'v0.4-beta-build_1';
 //Exports
 exports.config = config;
 exports.isDebug = isDebug;

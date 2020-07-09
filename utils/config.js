@@ -46,7 +46,31 @@ function generateConfigFile(fs) {
       fs.writeFileSync('xp.json', '{}', 'utf8');
       logger.debug('Generated xp file!');
     }
-  }
+    if(!fs.existsSync('shop.json')) {
+      fs.writeFileSync('shop.json', JSON.stringify(addItemsToShopAtSetup()), 'utf8');
+      logger.debug('Generated shop file!');
+    }
+    if(!fs.existsSync('shop_users.json')) {
+      fs.writeFileSync('shop_users.json', '{}', 'utf8');
+      logger.debug('Generated shop_users file!');
+    }
+}
+
+function addItemsToShopAtSetup() {
+  var shopItem = {};
+  shopItem[0] = {name:'XP-Boost x2 (10 Minuten)',type:'xp',multiplier:2,cost:1000,duration:10};
+  shopItem[1] = {name:'XP-Boost x2 (30 Minuten)',type:'xp',multiplier:2,cost:2500,duration:30};
+  shopItem[2] = {name:'XP-Boost x2 (1 Stunde)',type:'xp',multiplier:2,cost:5000,duration:60};
+  shopItem[3] = {name:'XP-Boost x2 (2 Stunden)',type:'xp',multiplier:2,cost:10000,duration:120};
+  shopItem[4] = {name:'XP-Boost x2 (5 Stunden)',type:'xp',multiplier:2,cost:22000,duration:300};
+  shopItem[5] = {name:'Coin-Boost x2 (12 Stunden)',type:'coin',multiplier:2,cost:20000,duration:720};
+  shopItem[6] = {name:'All-Boost x2 (1 Stunden)',type:'all',multiplier:2,cost:9000,duration:60};
+  shopItem[7] = {name:'All-Boost x2 (2 Stunden)',type:'all',multiplier:2,cost:16000,duration:120};
+  shopItem[8] = {name:'All-Boost x4 (1 Stunde)',type:'all',multiplier:4,cost:50000,duration:60};
+  shopItem[9] = {name:'CoinSammler',type:'rank',cost:25000};
+  shopItem[10] = {name:'Richboooi rank',type:'rank',cost:100000};
+  return shopItem;
+}
 
 async function ask(msg, config, configName) {
   var answer = await question(msg + '\n');

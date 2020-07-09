@@ -34,10 +34,9 @@ module.exports = {
                     xpmananger.giveXP(xpmananger.onlineUsers[i], 'voice', args[1]);
                 }
                 answer = 'Alle im Voice channel haben ' + args[1] + ' xp geschenkt bekommen!';
-            } else if (args[0].toString().toLowerCase().startsWith('@')){
+            } else if (args[0].toString().toLowerCase().startsWith('<@')){
                 answer = 'Du gönnst ' + args[0] + ' ' + args[1] + ' XP!';
                 var id = args[0].toString().replace('<@','').toString().replace('>','').replace('!','').toString();
-                var fetchedUser = index.client.users.get(id);
                 xpmananger.giveXP(id, 'voice', args[1]);
             } else {
             }
