@@ -1,6 +1,7 @@
 const fs = require('fs');
 const index = require('../index.js');
 const logger = require('./logger.js');
+const shopManager = require('./shopmanager.js')
 var xpFileRaw = fs.readFileSync('xp.json', {encoding: 'utf8', flag: 'a+'});
 var xpFile = JSON.parse(xpFileRaw);
 var onlineUsers = [];
@@ -8,9 +9,17 @@ var onlineUsers = [];
 function giveXP(userid, type, value) {
     var wonxp;
     var woncoins;
+    var nonboostxp;
+    var nonboostcoins;
+    var boost = shopManager.hasUserBoost(userid);
     if(value != null) {
-        wonxp = parseInt(value);
-        woncoins = randomValue(index.config.coinrate_voice);
+        if(type == 'xpevent') {
+            wonxp = parseInt(value);
+            woncoins = randomValue(index.config.coinrate_voice);
+        } else {
+            wonxp = randomValue(index.config.xprate_voice);
+            woncoins = parseInt(value);
+        }
     } else {
         if(type == 'text') {
             wonxp = randomValue(index.config.xprate_text);
@@ -21,7 +30,26 @@ function giveXP(userid, type, value) {
             woncoins = randomValue(index.config.coinrate_voice);
         }
     }
-    
+
+    if(boost) {
+        switch(shopManager.getUserBoostType(userid)) {
+            case 'xp':
+                nonboostxp = wonxp;
+                wonxp = wonxp * parseInt(shopManager.getUserBoostMultiplicator(userid));
+                break;
+            case 'coin':
+                nonboostcoins = woncoins;
+                woncoins = woncoins * parseInt(shopManager.getUserBoostMultiplicator(userid));
+                break;
+            case 'all':
+                nonboostxp = wonxp;
+                nonboostcoins = woncoins;
+                wonxp = wonxp * parseInt(shopManager.getUserBoostMultiplicator(userid));
+                woncoins = woncoins * parseInt(shopManager.getUserBoostMultiplicator(userid));
+                break;
+        }
+    }
+
     var fetchedUser = index.client.users.get(userid); 
     if(fetchedUser.bot) return;
     generateAccountIfEmpty(userid);
@@ -68,11 +96,45 @@ function giveXP(userid, type, value) {
         index.client.channels.get(index.config.xpchannel).send(generateScoreboard());
     }
     if(type == 'text') {
-        logger.xp(fetchedUser.tag + ' got ' + wonxp + ' xp! LvL:' + user.level + ' NextLvL: ' + ((user.level * index.config.xpvalue) - user.xp));
-        logger.coins(fetchedUser.tag + ' got ' + woncoins + ' coins!');
+        if(boost) {
+            switch(shopManager.getUserBoostType(userid)) {
+                case 'xp':
+                    logger.xp('[BOOST] ' + fetchedUser.tag + ' got ' + wonxp + ' xp! (NonBoost:'+nonboostxp+') LvL:' + user.level + ' NextLvL: ' + ((user.level * index.config.xpvalue) - user.xp));
+                    logger.coins(fetchedUser.tag + ' got ' + woncoins + ' coins!');
+                    break;
+                case 'coin':
+                    logger.xp(fetchedUser.tag + ' got ' + wonxp + ' xp! LvL:' + user.level + ' NextLvL: ' + ((user.level * index.config.xpvalue) - user.xp));
+                    logger.coins('[BOOST] ' + fetchedUser.tag + ' got ' + woncoins + ' coins! (NonBoost:'+nonboostcoins+')');
+                    break;
+                case 'all':
+                    logger.xp('[BOOST] ' + fetchedUser.tag + ' got ' + wonxp + ' xp! (NonBoost:'+nonboostxp+') LvL:' + user.level + ' NextLvL: ' + ((user.level * index.config.xpvalue) - user.xp));
+                    logger.coins('[BOOST] ' + fetchedUser.tag + ' got ' + woncoins + ' coins! (NonBoost:'+nonboostcoins+')');
+                    break;
+            }
+        } else {
+            logger.xp(fetchedUser.tag + ' got ' + wonxp + ' xp! LvL:' + user.level + ' NextLvL: ' + ((user.level * index.config.xpvalue) - user.xp));
+            logger.coins(fetchedUser.tag + ' got ' + woncoins + ' coins!');
+        }
     } else {
-        logger.xpVoice(fetchedUser.tag + ' got ' + wonxp + ' xp! LvL:' + user.level + ' NextLvL: ' + ((user.level * index.config.xpvalue) - user.xp));
-        logger.coinsVoice(fetchedUser.tag + ' got ' + woncoins + ' coins!');
+        if(boost) {
+            switch(shopManager.getUserBoostType()) {
+                case 'xp':
+                    logger.xpVoice('[BOOST] ' + fetchedUser.tag + ' got ' + wonxp + ' xp! (NonBoost:'+nonboostxp+') LvL:' + user.level + ' NextLvL: ' + ((user.level * index.config.xpvalue) - user.xp));
+                    logger.coinsVoice(fetchedUser.tag + ' got ' + woncoins + ' coins!');
+                    break;
+                case 'coin':
+                    logger.xpVoice(fetchedUser.tag + ' got ' + wonxp + ' xp! LvL:' + user.level + ' NextLvL: ' + ((user.level * index.config.xpvalue) - user.xp));
+                    logger.coinsVoice('[BOOST] ' + fetchedUser.tag + ' got ' + woncoins + ' coins! (NonBoost:'+nonboostcoins+')');
+                    break;
+                case 'all':
+                    logger.xpVoice('[BOOST] ' + fetchedUser.tag + ' got ' + wonxp + ' xp! (NonBoost:'+nonboostxp+') LvL:' + user.level + ' NextLvL: ' + ((user.level * index.config.xpvalue) - user.xp));
+                    logger.coinsVoice('[BOOST] ' + fetchedUser.tag + ' got ' + woncoins + ' coins! (NonBoost:'+nonboostcoins+')');
+                    break;
+            }
+        } else {
+            logger.xpVoice(fetchedUser.tag + ' got ' + wonxp + ' xp! LvL:' + user.level + ' NextLvL: ' + ((user.level * index.config.xpvalue) - user.xp));
+            logger.coinsVoice(fetchedUser.tag + ' got ' + woncoins + ' coins!');
+        }
     }
     saveFile();
 }
@@ -168,3 +230,4 @@ exports.startUpAddUsers = startUpAddUsers;
 exports.generateScoreboard = generateScoreboard;
 exports.getUserEntry = getUserEntry;
 exports.generateAccountIfEmpty = generateAccountIfEmpty;
+exports.saveFile = saveFile;

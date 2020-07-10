@@ -8,16 +8,18 @@ const commandManager = require('./utils/commandmanager.js')
 const configFile = fs.readFileSync('config.json', {encoding: 'utf8', flag: 'a+'});
 const config = JSON.parse(configFile);
 const xpManager = require('./utils/xpmanager.js');
+const shopManager = require('./utils/shopmanager.js')
 const logger = require('./utils/logger.js');
 const isDebug = config.debug;
 const isCommandListening = config.commandlistening;
-const build = 'v0.4-beta-build_1';
+const build = 'v0.5-beta-build_1';
 //Exports
 exports.config = config;
 exports.isDebug = isDebug;
 exports.isCommandListening = isCommandListening;
 exports.client = client;
 exports.Discord = Discord;
+exports.fs = fs;
 
 //Code Area
 console.log('+-+-+-+-+-+-+-+-+-+-+-+-+');
@@ -39,7 +41,10 @@ if(config.token != undefined) {
     getAllVoiceUsers();
     var timer = setInterval(function() {
       xpManager.countdownVoiceXP();
-  }, 1000 * 60 * 5);
+    }, 1000 * 60 * 5);
+    var shopTimer = setInterval(function() {
+      shopManager.checkCountdown();
+    }, 1000 * 60 * 1)
   //Milliseconds * seconds * minutes
   });
 } else {
