@@ -15,10 +15,12 @@ function addItemToUser(userid, item) {
     generateAccountIfEmpty(userid);
     var userItems = getUserItems(userid);
     userItems.push(item);
-    usersInBoost[userid] = {
-        itemid: item.id,
-        timeleft: item.duration
-    };
+    if(item.type == 'xp' || item.type == 'voice' || item.type == 'all') {
+        usersInBoost[userid] = {
+            itemid: item.id,
+            timeleft: item.duration
+        };
+    }
     xpManager.getUserEntry(userid).coins = xpManager.getUserEntry(userid).coins - item.cost;
     saveFile();
     xpManager.saveFile();
