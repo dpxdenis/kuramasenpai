@@ -17,15 +17,6 @@ module.exports = {
         var fetchedUser = index.client.users.get(id);
         if (args.length == 1) {
             if(xpManager.xpFile[id] != undefined) {
-                var items = '';
-                if(shopManager.getUserItems(id).length != 0) {
-                    for(var i = 0; i < shopManager.getUserItems(id).length; i++) {
-                        item = shopManager.getUserItems(id)[i];
-                        items = items + item.name + '\n';
-                    }
-                } else {
-                    items = '-'
-                }
                 const embed = {
                     color: 0xff0000,
                     title: fetchedUser.tag,
@@ -42,7 +33,7 @@ module.exports = {
                         {name: 'Level: ', value: xpManager.xpFile[id].level},
                         {name: 'Coins: ', value: xpManager.xpFile[id].coins},
                         {name: 'Erforderliche XP bis zum nächsten Level', value: ((xpManager.xpFile[id].level * index.config.xpvalue) - xpManager.xpFile[id].xp)},
-                        {name: 'Items:', value: items},
+                        {name: 'Items:', value: shopManager.getUserItemsAsString(id)},
                         {name: 'Angefordert von: ', value: message.author.tag}
                     ]
                 };

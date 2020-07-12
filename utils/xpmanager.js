@@ -84,7 +84,8 @@ function giveXP(userid, type, value) {
                 {name: 'LevelUp!', value: 'Du bischt in 1 neuz levelz!'},
                 {name: 'Level: ', value: currentLvL},
                 {name: 'Coins: ', value: user.coins},
-                {name: 'Erforderliche XP bis zum nächsten Level', value: difference}
+                {name: 'Erforderliche XP bis zum nächsten Level', value: difference},
+                {name: 'Items:', value: shopManager.getUserItemsAsString(userid)}
             ]
         };
 
@@ -117,7 +118,7 @@ function giveXP(userid, type, value) {
         }
     } else {
         if(boost) {
-            switch(shopManager.getUserBoostType()) {
+            switch(shopManager.getUserBoostType(userid)) {
                 case 'xp':
                     logger.xpVoice('[BOOST] ' + fetchedUser.tag + ' got ' + wonxp + ' xp! (NonBoost:'+nonboostxp+') LvL:' + user.level + ' NextLvL: ' + ((user.level * index.config.xpvalue) - user.xp));
                     logger.coinsVoice(fetchedUser.tag + ' got ' + woncoins + ' coins!');

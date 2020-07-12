@@ -2,7 +2,7 @@ const logger = require('../utils/logger.js');
 const index = require('../index.js');
 const shopManager = require('../utils/shopmanager.js')
 
-const embed = {
+var embed = {
     color: 0xff0000,
     title: 'Shop',
     description: 'Hier die aktuellen Angeböte bjlaaad!',
@@ -23,8 +23,8 @@ module.exports = {
 	guildOnly: true,
 	needsPerm: false,
 	execute(message, args) {
-        var answer = {embed: embed};
         generateShop();
+        var answer = {embed: embed};
 		message.channel.send(answer);
 		logger.command(message.author.username, message, answer);
 
@@ -32,6 +32,7 @@ module.exports = {
 };
 
 function generateShop() {
+    embed.fields = [];
     var items = [];
     var allItems = Object.keys(shopManager.getShopItems());
     allItems.forEach(function(key) {
@@ -51,6 +52,7 @@ function generateShop() {
         var v = 'Kosten: ' + split[3] + ' Coins'
         embed.fields.push({name: n, value: v});
     }
+
     embed.fields.push({name: '-----------------', value: '-----------------'})
     embed.fields.push({name: 'Wie kaufst du ein?', value: '+buy <id>'})
     embed.fields.push({name: 'Wie siehst du welche Items du hast und wie lange sie noch halten?', value: '+stats'})

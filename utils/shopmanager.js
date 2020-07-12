@@ -39,12 +39,15 @@ function checkCountdown() {
                     usersInBoost[key].timeleft--;
                     var fetchedUsers = index.client.users.get(key);
                     users += fetchedUsers.tag + '(ID:' + usersInBoost[key].itemid + ' / TimeLeft: '+ usersInBoost[key].timeleft +' Min.),'
-                    logger.debug('[SHOP] ' + (users.toString().split(',').length - 1) + ' Boosters active!')
-                    logger.debug('[SHOP] ' + users);
                 }
             }
         });
 
+        var u = (users.toString().split(',').length - 1);
+        if(u != 0) {
+            logger.debug('[SHOP] ' + u + ' Boosters active!')
+            logger.debug('[SHOP] ' + users);
+        }
         fs.writeFileSync('boost_users.json', JSON.stringify(usersInBoost), 'utf8', function(err) {
             if(err) logger.err('boost_users file saving failed! ' + err);
         });
@@ -74,6 +77,20 @@ function generateAccountIfEmpty(userid) {
 function getUserItems(userid){
     generateAccountIfEmpty(userid);
     return shopUsersFile[userid].items;
+}
+
+function getUserItemsAsString(userid) {
+    generateAccountIfEmpty(userid);
+    var items = '';
+    if(getUserItems(userid).length != 0) {
+        for(var i = 0; i < getUserItems(userid).length; i++) {
+            item = getUserItems(userid)[i];
+            items = items + item.name + '\n';
+        }
+    } else {
+        items = '-';
+    }
+    return items;
 }
 
 function removeUserItem(userid, itemid) {
@@ -164,3 +181,4 @@ exports.checkCountdown = checkCountdown;
 exports.getUserBoostType = getUserBoostType;
 exports.getUserBoostMultiplicator = getUserBoostMultiplicator;
 exports.hasUserEnoughMoney = hasUserEnoughMoney;
+exports.getUserItemsAsString = getUserItemsAsString;
