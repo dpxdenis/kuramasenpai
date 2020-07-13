@@ -84,8 +84,13 @@ function getUserItemsAsString(userid) {
     var items = '';
     if(getUserItems(userid).length != 0) {
         for(var i = 0; i < getUserItems(userid).length; i++) {
-            item = getUserItems(userid)[i];
-            items = items + item.name + '\n';
+            if(getUserItems(userid)[i].duration != null) {
+                item = getUserItems(userid)[i];
+                items = items + item.name + ' (Rest: '+ getUserItemTimeLeft(userid) + ' Min.)' +'\n';
+            } else {
+                item = getUserItems(userid)[i];
+                items = items + item.name +'\n';
+            }
         }
     } else {
         items = '-';
@@ -172,6 +177,18 @@ function hasUserEnoughMoney(usercoins, itemcost) {
     }
 }
 
+function getUserItemTimeLeft(userid) {
+    if(hasUserBoost(userid)) {
+        if (usersInBoost[userid] != null) {
+            return usersInBoost[userid].timeleft;
+        } else {
+            return null;
+        }
+    } else {
+        return null;
+    }
+}
+
 exports.getUserItems = getUserItems;
 exports.getShopItems = getShopItems;
 exports.addItemToUser = addItemToUser;
@@ -182,3 +199,4 @@ exports.getUserBoostType = getUserBoostType;
 exports.getUserBoostMultiplicator = getUserBoostMultiplicator;
 exports.hasUserEnoughMoney = hasUserEnoughMoney;
 exports.getUserItemsAsString = getUserItemsAsString;
+exports.getUserItemTimeLeft = getUserItemTimeLeft;
