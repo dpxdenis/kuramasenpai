@@ -18,10 +18,10 @@ module.exports = {
         var answer = 'Huch? Du benutzt den Command falsch.';
         var userid = message.author.id;
         if(args.length == 1) {
-            if(args[0] != 777 || args[0] != 7777 || args[0] != 187) {
+            if(args[0] != 777 && args[0] != 7777 && args[0] != 187) {
                 answer = 'Dieses Produkt gibt es nicht.'
             } else {
-                var item = adminItems[args[0]];
+                var item = getAdminItem(args[0]);
                 if(!shopManager.hasUserItem(userid,item.id)) {
                     if(shopManager.hasUserEnoughMoney(xpManager.getUserEntry(userid).coins, item.cost)) {
                         if(!shopManager.hasUserBoost(userid)) {
@@ -44,3 +44,12 @@ module.exports = {
 
 	},
 };
+
+function getAdminItem(id) {
+    for(var i = 0; i < adminItems.length; i++) {
+        if(adminItems[i].id == id) {
+            return adminItems[i];
+        }
+    }
+    return null;
+}

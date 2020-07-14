@@ -12,7 +12,7 @@ const shopManager = require('./utils/shopmanager.js')
 const logger = require('./utils/logger.js');
 const isDebug = config.debug;
 const isCommandListening = config.commandlistening;
-const build = 'v0.5-beta-build_7';
+const build = 'v0.5-beta-build_8';
 
 //Exports
 exports.config = config;
