@@ -14,11 +14,15 @@ function setup(config, logger, fs){
     config.commandlistening = true;
 
     ask('Please enter your DiscordBot token!', config, 'token').then(() => 
+    ask('Please enter your ServerID!', config, 'serverid').then(() =>
     ask('Which prefix for the commands do u want?', config, 'prefix').then(() => 
     ask('Which XP multiplier do u want? nextlevel=level*multiplier', config, 'xpvalue').then(() => 
     ask('In which channel can i post the XP notifications? (ID)', config, 'xpchannel').then(() =>
+    ask('Which ID has your LvL 10 role?', config, 'lvl10roleid').then(() =>
+    ask('Which ID has your LvL 30 role?', config, 'lvl30roleid').then(() =>
+    ask('Which ID has your LvL 50 role?', config, 'lvl50roleid').then(() =>
     ask('Which ID has your Admin role?', config, 'adminroleid').then(() =>
-    ask('Which ID has your Mod role?', config, 'modroleid').then(() => finish(config, logger , fs)))))));
+    ask('Which ID has your Mod role?', config, 'modroleid').then(() => finish(config, logger , fs)))))))))));
 }
 
 function finish(config, logger, fs) {

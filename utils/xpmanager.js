@@ -12,6 +12,9 @@ function giveXP(userid, type, value) {
     var nonboostxp;
     var nonboostcoins;
     var boost = shopManager.hasUserBoost(userid);
+    var rankUpgrade = false;
+    var rank;
+    var fetchedServer = index.client.guilds.get(index.config.serverid);
     if(value != null) {
         if(type == 'xpevent') {
             wonxp = parseInt(value);
@@ -68,6 +71,24 @@ function giveXP(userid, type, value) {
         nextLvL = parseInt(user.level * index.config.xpvalue);
         var difference = parseInt(nextLvL - currentXP);
 
+        switch(user.level) {
+            case 10:
+                rankUpgrade = true;
+                rank = fetchedServer.roles.get(index.config.lvl10roleid);
+                break;
+            case 30:
+                rankUpgrade = true;
+                rank = fetchedServer.roles.get(index.config.lvl30roleid);
+                fetchedServer.members.get(userid).removeRole(index.config.lvl10roleid);
+                break;
+            case 50:
+                rankUpgrade = true;
+                rank = fetchedServer.roles.get(index.config.lvl50roleid);
+                fetchedServer.members.get(userid).removeRole(index.config.lvl10roleid);
+                fetchedServer.members.get(userid).removeRole(index.config.lvl30roleid);
+                break;
+        }
+
         var embed = {
             color: 0xff0000,
             title: fetchedUser.tag,
@@ -88,6 +109,11 @@ function giveXP(userid, type, value) {
                 {name: 'Items:', value: shopManager.getUserItemsAsString(userid)}
             ]
         };
+
+        if(rankUpgrade) {
+            embed.fields.push({name: 'Neuer Rang!', value: rank.name})
+            fetchedServer.members.get(userid).addRole(rank)
+        }
 
         index.client.channels.get(index.config.xpchannel).send('<@' + userid + '>');
         index.client.channels.get(index.config.xpchannel).send({embed: embed});
@@ -137,6 +163,10 @@ function giveXP(userid, type, value) {
             logger.coinsVoice(fetchedUser.tag + ' got ' + woncoins + ' coins!');
         }
     }
+    if(rankUpgrade) {
+        logger.xpRank(fetchedUser.tag + ' has an new Rank: ' + rank.name)
+    }
+
     saveFile();
 }
 

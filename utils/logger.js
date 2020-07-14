@@ -34,6 +34,10 @@ function xp(msg){
     console.log(new Date().toLocaleString() + ' [XP] ' + msg);
 }
 
+function xpRank(msg){
+    console.log(new Date().toLocaleString() + ' [XP][RANK] ' + msg);
+}
+
 function xpVoice(msg){
     console.log(new Date().toLocaleString() + ' [XP][VOICE] ' + msg);
 }
@@ -74,3 +78,4 @@ exports.coinsVoice = coinsVoice;
 exports.xplvlupVoice = xplvlupVoice;
 exports.update = update;
 exports.shop = shop;
+exports.xpRank = xpRank;
