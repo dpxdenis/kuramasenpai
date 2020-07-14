@@ -15,13 +15,13 @@ function addItemToUser(userid, item) {
     generateAccountIfEmpty(userid);
     var userItems = getUserItems(userid);
     userItems.push(item);
-    if(item.type == 'xp' || item.type == 'voice' || item.type == 'all') {
+    if(item.type == 'xp' || item.type == 'coin' || item.type == 'all') {
         usersInBoost[userid] = {
             itemid: item.id,
             timeleft: item.duration
         };
     }
-    xpManager.getUserEntry(userid).coins = xpManager.getUserEntry(userid).coins - item.cost;
+    xpManager.getUserEntry(userid).coins = parseInt(xpManager.getUserEntry(userid).coins) - parseInt(item.cost);
     saveFile();
     xpManager.saveFile();
 }
@@ -170,7 +170,7 @@ function getUserBoostMultiplicator(userid) {
 }
 
 function hasUserEnoughMoney(usercoins, itemcost) {
-    if((usercoins-itemcost) >= 0) {
+    if((parseInt(usercoins) - parseInt(itemcost)) >= 0) {
         return true;
     } else {
         return false;
