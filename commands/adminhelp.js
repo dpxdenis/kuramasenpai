@@ -10,7 +10,7 @@ var embed = {
     [
     ],
     thumbnail: {
-        url:  index.client.users.get('536292484838457344').avatarURL
+        url:  index.fetchUser('536292484838457344').avatarURL()
     },
     footer: {text: 'Commands Stand von ' + new Date()}
 };
@@ -27,7 +27,7 @@ module.exports = {
         generateAdminHelp();
         var answer = {embed: embed};
 		message.channel.send(answer);
-		logger.command(message.author.username, message, answer);
+		logger.command(message.author.username, message.toString(), answer);
 
 	},
 };

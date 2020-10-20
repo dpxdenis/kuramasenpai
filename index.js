@@ -12,7 +12,7 @@ const shopManager = require('./utils/shopmanager.js')
 const logger = require('./utils/logger.js');
 const isDebug = config.debug;
 const isCommandListening = config.commandlistening;
-const build = 'v0.5-beta-build_8';
+const build = 'v1.0-beta-build_1';
 
 //Exports
 exports.config = config;
@@ -21,6 +21,8 @@ exports.isCommandListening = isCommandListening;
 exports.client = client;
 exports.Discord = Discord;
 exports.fs = fs;
+exports.fetchUser = fetchUser;
+exports.handleIfUserAccountDelete = handleIfUserAccountDelete;
 
 //Code Area
 console.log('+-+-+-+-+-+-+-+-+-+-+-+-+');
@@ -46,6 +48,9 @@ if(config.token != undefined) {
     var shopTimer = setInterval(function() {
       shopManager.checkCountdown();
     }, 1000 * 60 * 1)
+    var cooldownXP = setInterval(function() {
+      xpManager.countdownCooldown();
+    }, 1000);
   //Milliseconds * seconds * minutes
   });
 } else {
@@ -65,19 +70,24 @@ client.on('message', message => {
 
 //XP for Voice!
 client.on('voiceStateUpdate', (oldMember, newMember) => {
-  let newUserChannel = newMember.voiceChannel;
-  let oldUserChannel = oldMember.voiceChannel;
-  var fetchedUser = client.users.get(newMember.id); 
+  let newUserChannel;
+  let oldUserChannel;
+  if(newMember.channel != null) {
+    newUserChannel = newMember.channel;
+    oldUserChannel = oldMember.channel;  
+  }
+
+  var fetchedUser = fetchUser(newMember.id); 
   var onlineUsersList = []
 
-  if(newMember.client.bot || oldMember.client.bot) return;
+  if(newMember.member.user.bot || oldMember.member.user.bot) return;
 
-  if(oldUserChannel === undefined && newUserChannel !== undefined) {
+  if(oldUserChannel == null && newUserChannel != undefined) {
     //User joins
     xpManager.onlineUsers.push(newMember.id);
     logger.debug(fetchedUser.tag + ' joined Voice!');
     for (let i = 0; i < xpManager.onlineUsers.length; i++) {
-      onlineUsersList.push(client.users.get(xpManager.onlineUsers[i]).tag);
+      onlineUsersList.push(fetchUser(xpManager.onlineUsers[i]).tag);
     }
     logger.debug('Online: ' + xpManager.onlineUsers.length);
     logger.debug('Users: ' + onlineUsersList)
@@ -87,7 +97,7 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
       xpManager.onlineUsers.splice(xpManager.onlineUsers.indexOf(newMember.id),1)
       logger.debug(fetchedUser.tag + ' lefted Voice!');
       for (let i = 0; i < xpManager.onlineUsers.length; i++) {
-        onlineUsersList.push(client.users.get(xpManager.onlineUsers[i]).tag);
+        onlineUsersList.push(fetchUser(xpManager.onlineUsers[i]).tag);
       }
       logger.debug('Online: ' + xpManager.onlineUsers.length);
       logger.debug('Users: ' + onlineUsersList)
@@ -96,10 +106,10 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
 });
 
 function getAllVoiceUsers() {
-  var voiceChannels = client.channels.filter(c => c.type === 'voice')
+  var voiceChannels = client.channels.cache.filter(c => c.type === 'voice')
   for(const [cID, c] of voiceChannels) {
     for(const [memberID, member] of c.members) {
-      var fetchedUser = client.users.get(memberID); 
+      var fetchedUser = fetchUser(memberID); 
       if(!fetchedUser.bot) {
         xpManager.startUpAddUsers(fetchedUser.tag, memberID);
       }
@@ -108,7 +118,27 @@ function getAllVoiceUsers() {
 
 }
 
+function fetchUser(id) {
+  if(client.users.cache.get(id) == undefined) {
+    //handleIfUserAccountDelete(id);
+    var sampleUser = {'id': id, 'bot': false, 'username:': 'UserDeleted', 'discriminator': '7777', 'tag': 'UserDeleted#7777', 'avatarURL': client.users.cache.get('536292484838457344').avatarURL}
+    return sampleUser;
+  } else {
+    return client.users.cache.get(id);
+  }
+}
+
+function handleIfUserAccountDelete(id){
+  if(client.users.cache.get(id) == undefined) {
+    if(!xpManager.xpFile[id]) {
+      return;
+    }
+    xpManager.xpFile.delete(id);
+    logger.debug('Deleted User ' + id + ' from all Files (Account deleted)!');
+  }
+}
+
 //FIX FOR RANDOM CRASH
 client.on('error', (err) => {
-  console.log(err.message);
+  logger.err(err.message);
 });

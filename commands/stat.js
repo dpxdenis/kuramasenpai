@@ -21,14 +21,14 @@ module.exports = {
                     icon_url: 'http://devdenis.bplaced.net/sharingan.png'
                 },
                 thumbnail: {
-                    url: message.author.avatarURL
+                    url: message.author.avatarURL()
                 },
                 timestamp: new Date(),
                 fields:
                 [
                     {name: 'Level: ', value: xpManager.xpFile[message.author.id].level},
                     {name: 'Coins: ', value: xpManager.xpFile[message.author.id].coins},
-                    {name: 'Erforderliche XP bis zum nächsten Level', value: ((xpManager.xpFile[message.author.id].level * index.config.xpvalue) - xpManager.xpFile[message.author.id].xp)},
+                    {name: 'Erforderliche XP bis zum nächsten Level', value: parseInt(xpManager.getNextLvLUp(xpManager.xpFile[message.author.id]) - xpManager.xpFile[message.author.id].xp)},
                     {name: 'Items:', value: shopManager.getUserItemsAsString(message.author.id)}
                 ]
             };
@@ -36,7 +36,7 @@ module.exports = {
         }
 
 		message.channel.send(answer);
-		logger.command(message.author.username, message, answer);
+		logger.command(message.author.username, message.toString(), answer);
 
 	},
 };

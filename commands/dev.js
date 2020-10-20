@@ -1,7 +1,7 @@
 const logger = require('../utils/logger.js');
 const index = require('../index.js');
 const xpManager = require('../utils/xpmanager.js');
-
+const shopManager = require('../utils/shopmanager.js')
 module.exports = {
 	name: 'dev',
 	description: 'Test command',
@@ -14,7 +14,7 @@ module.exports = {
         /*var fetchedServer = index.client.guilds.get(index.config.serverid);
         var role = fetchedServer.roles.get(index.config.lvl10roleid)
 		fetchedServer.members.get('539485040711565323').addRole(role);*/
-		var users = [];
+		/*var users = [];
 		var fetchedServer = index.client.guilds.get(index.config.serverid)
 		var allUserIDs = Object.keys(xpManager.xpFile);
 		allUserIDs.forEach(function(key) {
@@ -38,11 +38,11 @@ module.exports = {
 			} else {
 
 			}
-		}
+		}*/
 
-        var answer = 'Finish boi';
+		var answer = 'aaa';
 		message.channel.send(answer);
-		logger.command(message.author.username, message, answer);
+		logger.command(message.author.username, message.toString(), answer);
 
 	},
 };

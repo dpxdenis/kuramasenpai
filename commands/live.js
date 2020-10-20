@@ -26,7 +26,7 @@ module.exports = {
 		message.channel.send('@everyone' + ' LIVE!!!!!');
 		var answer = {embed: live};
 		message.channel.send(answer);
-		logger.command(message.author.username, message, answer);
+		logger.command(message.author.username, message.toString(), answer);
 
 	},
 };

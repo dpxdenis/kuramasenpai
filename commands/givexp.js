@@ -10,7 +10,7 @@ var embed = {
         icon_url: 'http://devdenis.bplaced.net/sharingan.png'
     },
     thumbnail: {
-        url:  index.client.users.get('536292484838457344').avatarURL
+        url:  index.fetchUser('536292484838457344').avatarURL()
     },
     timestamp: new Date(),
     fields:
@@ -43,7 +43,7 @@ module.exports = {
         } else {
         }
 		message.channel.send(answer);
-		logger.command(message.author.username, message, answer);
+		logger.command(message.author.username, message.toString(), answer);
 
 	},
 };

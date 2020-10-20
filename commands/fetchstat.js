@@ -14,7 +14,7 @@ module.exports = {
 	execute(message, args) {
         var answer = 'Du musst erstmal xp bekommen um sie abzufragen!';
         var id = args[0].toString().replace('<@','').toString().replace('>','').replace('!','').toString();
-        var fetchedUser = index.client.users.get(id);
+        var fetchedUser = index.fetchUser(id);
         if (args.length == 1) {
             if(xpManager.xpFile[id] != undefined) {
                 const embed = {
@@ -25,14 +25,14 @@ module.exports = {
                         icon_url: 'http://devdenis.bplaced.net/sharingan.png'
                     },
                     thumbnail: {
-                        url: fetchedUser.avatarURL
+                        url: fetchedUser.avatarURL()
                     },
                     timestamp: new Date(),
                     fields:
                     [
                         {name: 'Level: ', value: xpManager.xpFile[id].level},
                         {name: 'Coins: ', value: xpManager.xpFile[id].coins},
-                        {name: 'Erforderliche XP bis zum nächsten Level', value: ((xpManager.xpFile[id].level * index.config.xpvalue) - xpManager.xpFile[id].xp)},
+                        {name: 'Erforderliche XP bis zum nächsten Level', value: parseInt(xpManager.getNextLvLUp(xpManager.xpFile[id] - xpManager.xpFile[id].xp))},
                         {name: 'Items:', value: shopManager.getUserItemsAsString(id)},
                         {name: 'Angefordert von: ', value: message.author.tag}
                     ]
@@ -43,7 +43,7 @@ module.exports = {
         }
 
 		message.channel.send(answer);
-		logger.command(message.author.username, message, answer);
+		logger.command(message.author.username, message.toString(), answer);
 
 	},
 };

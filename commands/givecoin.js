@@ -27,7 +27,7 @@ module.exports = {
         } else {
         }
 		message.channel.send(answer);
-		logger.command(message.author.username, message, answer);
+		logger.command(message.author.username, message.toString(), answer);
 
 	},
 };

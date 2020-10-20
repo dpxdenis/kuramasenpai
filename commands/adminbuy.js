@@ -4,7 +4,8 @@ const xpManager = require('../utils/xpmanager.js');
 
 const adminItems = [{"id":777,"name":"XP-Boost x10 (10 Minuten)","type":"xp","multiplier":10,"cost":1,"duration":10},
                     {"id":7777,"name":"Coin-Boost x50 (1 Stunde)","type":"coin","multiplier":50,"cost":1,"duration":60},
-                    {"id":187,"name":"All-Boost x10 (10 Minuten)","type":"all","multiplier":10,"cost":1,"duration":10}]
+                    {"id":187,"name":"All-Boost x10 (10 Minuten)","type":"all","multiplier":10,"cost":1,"duration":10},
+                    {"id":6969,"name":"All-Boost x10 (1 Stunde)","type":"all","multiplier":10,"cost":1,"duration":60}]
 
 module.exports = {
 	name: 'adminbuy',
@@ -18,12 +19,12 @@ module.exports = {
         var answer = 'Huch? Du benutzt den Command falsch.';
         var userid = message.author.id;
         if(args.length == 1) {
-            if(args[0] != 777 && args[0] != 7777 && args[0] != 187) {
+            if(args[0] != 777 && args[0] != 7777 && args[0] != 187 && args[0] != 6969) {
                 answer = 'Dieses Produkt gibt es nicht.'
             } else {
                 var item = getAdminItem(args[0]);
                 if(!shopManager.hasUserItem(userid,item.id)) {
-                    if(shopManager.hasUserEnoughMoney(xpManager.getUserEntry(userid).coins, item.cost)) {
+                    if(shopManager.hasUserEnoughMoney(userid, item.cost)) {
                         if(!shopManager.hasUserBoost(userid)) {
                             shopManager.addItemToUser(userid,item);
                             answer = 'Du hast erfolgreich ' + item.name + ' für ' + item.cost + ' Coins gekauft!'
@@ -40,7 +41,7 @@ module.exports = {
         } else {
         }
         message.channel.send(answer);
-		logger.command(message.author.username, message, answer);
+		logger.command(message.author.username, message.toString(), answer);
 
 	},
 };

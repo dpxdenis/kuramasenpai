@@ -16,7 +16,7 @@ module.exports = {
 
 		var answer = 'Reloading all Commands...';
 		message.channel.send(answer);
-        logger.command(message.author.username, message, answer);
+        logger.command(message.author.username, message.toString(), answer);
         commandManager.reloadCommands(message);
 
 	},

@@ -10,8 +10,7 @@ var usersInBoostFile = fs.readFileSync('boost_users.json', {encoding: 'utf8', fl
 var usersInBoost = JSON.parse(usersInBoostFile);
 
 function addItemToUser(userid, item) {
-    var fetchedUsers = index.client.users.get(userid);
-    if(fetchedUsers.bot) return;
+    var fetchedUsers = index.fetchUser(userid);
     generateAccountIfEmpty(userid);
     var userItems = getUserItems(userid);
     userItems.push(item);
@@ -21,9 +20,7 @@ function addItemToUser(userid, item) {
             timeleft: item.duration
         };
     }
-    xpManager.getUserEntry(userid).coins = parseInt(xpManager.getUserEntry(userid).coins) - parseInt(item.cost);
     saveFile();
-    xpManager.saveFile();
 }
 
 function checkCountdown() {
@@ -37,7 +34,7 @@ function checkCountdown() {
                     usersInBoost[key] = null;
                 } else {
                     usersInBoost[key].timeleft--;
-                    var fetchedUsers = index.client.users.get(key);
+                    var fetchedUsers = index.fetchUser(key);
                     users += fetchedUsers.tag + '(ID:' + usersInBoost[key].itemid + ' / TimeLeft: '+ usersInBoost[key].timeleft +' Min.),'
                 }
             }
@@ -86,10 +83,10 @@ function getUserItemsAsString(userid) {
         for(var i = 0; i < getUserItems(userid).length; i++) {
             if(getUserItems(userid)[i].duration != null) {
                 item = getUserItems(userid)[i];
-                items = items + item.name + ' (Rest: '+ getUserItemTimeLeft(userid) + ' Min.)' +'\n';
+                items = items + '- ' +item.name + ' (Rest: '+ getUserItemTimeLeft(userid) + ' Min.)' +'\n';
             } else {
                 item = getUserItems(userid)[i];
-                items = items + item.name +'\n';
+                items = items + '- ' + item.name +'\n';
             }
         }
     } else {
@@ -102,11 +99,11 @@ function removeUserItem(userid, itemid) {
     var items = getUserItems(userid);
     for(var i = 0; i < items.length; i++) {
         if(items[i].id == itemid) {
+            var fetchedUsers = index.fetchUser(userid);
+            logger.shop('User: ' + fetchedUsers.tag + ' || Removed Item: ' + items[i].name);
             items.splice(i,1);
         }
     }
-    var fetchedUsers = index.client.users.get(userid);
-    logger.shop('User: ' + fetchedUsers.tag + ' || Removed Item: ' + getShopItem(itemid).name);
     fs.writeFileSync('shop_users.json', JSON.stringify(shopUsersFile), 'utf8', function(err) {
         if(err) logger.err('shop_users file saving failed! ' + err);
     });
@@ -114,11 +111,6 @@ function removeUserItem(userid, itemid) {
 
 function getShopItems() {
     return shopFile;
-}
-
-function getShopItem(id) {
-
-    return shopFile[id];
 }
 
 function hasUserItem(userid, item) {
@@ -169,8 +161,8 @@ function getUserBoostMultiplicator(userid) {
     return null;
 }
 
-function hasUserEnoughMoney(usercoins, itemcost) {
-    if((parseInt(usercoins) - parseInt(itemcost)) >= 0) {
+function hasUserEnoughMoney(userid, itemcost) {
+    if((parseInt(xpManager.getUserEntry(userid).coins) - parseInt(itemcost)) >= 0) {
         return true;
     } else {
         return false;
@@ -189,6 +181,24 @@ function getUserItemTimeLeft(userid) {
     }
 }
 
+function isItemBooster(item) {
+    if(item.type == 'xp' || item.type == 'coin' || item.type == 'all') {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function buy(userid, cost) {
+    xpManager.getUserEntry(userid).coins -= parseInt(cost);
+    xpManager.saveFile();
+}
+
+function addCoins(userid, coins) {
+    xpManager.getUserEntry(userid).coins += parseInt(coins);
+    xpManager.saveFile();
+}
+
 exports.getUserItems = getUserItems;
 exports.getShopItems = getShopItems;
 exports.addItemToUser = addItemToUser;
@@ -200,3 +210,7 @@ exports.getUserBoostMultiplicator = getUserBoostMultiplicator;
 exports.hasUserEnoughMoney = hasUserEnoughMoney;
 exports.getUserItemsAsString = getUserItemsAsString;
 exports.getUserItemTimeLeft = getUserItemTimeLeft;
+exports.isItemBooster = isItemBooster;
+exports.shopUsersFile = shopUsersFile;
+exports.buy = buy;
+exports.addCoins = addCoins;

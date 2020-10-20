@@ -17,7 +17,7 @@ module.exports = {
 	execute(message, args) {
 		var answer = {embed: insta};
 		message.channel.send(answer);
-		logger.command(message.author.username, message, answer);
+		logger.command(message.author.username, message.toString(), answer);
 
 	},
 };

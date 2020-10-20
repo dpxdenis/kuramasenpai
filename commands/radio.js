@@ -1,17 +1,16 @@
 const logger = require('../utils/logger.js');
 
 module.exports = {
-	name: 'ping',
-	description: 'Pong! I luv thissss.',
+	name: 'radio',
+	description: 'Zeigt die die sunshine live 90er URL',
 	args: false,
-	usage: 'Only ping lol.',
+	usage: '+radio',
 	guildOnly: true,
-	aliases: ['pong'],
-	needsPerm: false,
+    needsPerm: true,
+    perm: 'admin',
 	execute(message, args) {
-		var answer = 'Pong. ping. pong. i won. HAH ' + message.author.toString();
+		var answer = 'http://sunshinelive.hoerradar.de/sunshinelive-90er-mp3-hq';
 		message.channel.send(answer);
 		logger.command(message.author.username, message.toString(), answer);
-
 	},
 };

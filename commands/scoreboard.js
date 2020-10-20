@@ -12,7 +12,7 @@ module.exports = {
 	execute(message, args) {
 		var answer = xpmanager.generateScoreboard();
 		message.channel.send(answer);
-		logger.command(message.author.username, message, answer);
+		logger.command(message.author.username, message.toString(), answer);
 
 	},
 };

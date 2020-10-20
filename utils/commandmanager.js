@@ -50,16 +50,19 @@ function handle(message) {
   const command = index.client.commands.get(commandName) || index.client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 
   //AntiExecuteNotFoundedCommandsWHYDONTUUSETHEHELP!!!
-  if(!command) return logger.command('User: ' + user.username + ' || Command: ' + commandName + ' not found!');
+  if(!command){
+    message.delete({ timeout: 1000, reason: 'Command not found' });
+    return logger.command('User: ' + user.username + ' || Command: ' + commandName + ' not found!');
+  }
 
   try {
       //Permissons auf lockerer Basis
       if(command.needsPerm) {
-        if(command.perm.toLowerCase() == 'admin' && !(message.member.roles.has(index.config.adminroleid))) {
-          message.delete(1000);
+        if(command.perm.toLowerCase() == 'admin' && !(message.member.roles.cache.has(index.config.adminroleid))) {
+          message.delete({ timeout: 1000, reason: 'Keine Permissions' });
           return logger.command(user.username, commandName, 'No Permissions');
-        } else if (command.perm.toLowerCase() == 'mod' && !(message.member.roles.has(index.config.modroleid || message.member.roles.has(index.config.adminroleid)))) {
-          message.delete(1000);
+        } else if (command.perm.toLowerCase() == 'mod' && !(message.member.roles.cache.has(index.config.modroleid || message.member.roles.cache.has(index.config.adminroleid)))) {
+          message.delete({ timeout: 1000, reason: 'Keine Permissions' });
           return logger.command(user.username, commandName, 'No Permissions');
         }
       }
@@ -81,22 +84,29 @@ function handle(message) {
       command.execute(message, args);
 
   } catch (error) {
+    logger.err('User: ' + user.username + ' || Command: ' + commandName + ' || Error while executing this command.')
     logger.err(error);
     logger.debug(error.stack);
-    logger.err('User: ' + user.username + ' || Command: ' + commandName + ' || Error while executing this command.')
   }
 }
 
 //AntiShittyAdProtectorV999
 function checkMessage(msg){
   if(msg.author.bot) return;
-  if(msg.content.toLowerCase().includes('discord.gg')) {
-    if (!msg.member.roles.has('224166766484520960') && !msg.member.roles.has('450337876006404097') && !msg.member.roles.has('244181814212558849')) {
-      return msg.delete(1000);
+  if(!msg.content.toLowerCase().includes('devdenis')) {
+    if(msg.content.toLowerCase().includes('discord.gg') || msg.content.toLowerCase().includes('http') || 
+      msg.content.toLowerCase().includes('www')) {
+      if (!msg.member.roles.cache.has(index.config.adminroleid) && !msg.member.roles.cache.has(index.config.modroleid) && !msg.member.roles.cache.has(index.config.friendsroleid)) {
+        return msg.delete({ timeout: 1000, reason: 'Keine Werbung yo' });
+      }
+  
     }
-
   }
-  xpmanager.giveXP(msg.author.id, 'text', null);
+
+  if(!xpmanager.hasAntiSpamCooldown(msg.author.id)) {
+    xpmanager.addAntiSpamCooldown(msg.author.id);
+    xpmanager.giveXP(msg.author.id, 'text', null);
+  }
 }
 
 exports.commandFiles = commandFiles;

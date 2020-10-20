@@ -6,13 +6,13 @@ const embed = {
     description: 'Du sehen diese Rates hier!',
     fields:
     [
-        {name: 'XP (Text)', value: index.config.xprate_text},
-        {name: 'Coins (Text)', value: index.config.coinrate_text},
-        {name: 'XP (Voice)', value: index.config.xprate_voice},
-        {name: 'Coins (Voice)', value: index.config.coinrate_voice}
+        {name: 'XP (Text)', value: Math.round((parseInt(index.config.xprate_text) / 3)) + ' - ' + index.config.xprate_text},
+        {name: 'Coins (Text)', value: Math.round((parseInt(index.config.coinrate_text) / 3)) + ' - ' + index.config.coinrate_text},
+        {name: 'XP (Voice)', value: Math.round((parseInt(index.config.xprate_voice) / 3)) + ' - ' + index.config.xprate_voice},
+        {name: 'Coins (Voice)', value: Math.round((parseInt(index.config.coinrate_voice) / 3)) + ' - ' + index.config.coinrate_voice}
     ],
     thumbnail: {
-        url:  index.client.users.get('536292484838457344').avatarURL
+        url:  index.fetchUser('536292484838457344').avatarURL()
     },
     footer: {text: 'XP-Rate Stand von ' + new Date()}
 };
@@ -28,7 +28,7 @@ module.exports = {
 	execute(message, args) {
 		var answer = {embed: embed};
 		message.channel.send(answer);
-		logger.command(message.author.username, message, answer);
+		logger.command(message.author.username, message.toString(), answer);
 
 	},
 };

@@ -22,7 +22,8 @@ function setup(config, logger, fs){
     ask('Which ID has your LvL 30 role?', config, 'lvl30roleid').then(() =>
     ask('Which ID has your LvL 50 role?', config, 'lvl50roleid').then(() =>
     ask('Which ID has your Admin role?', config, 'adminroleid').then(() =>
-    ask('Which ID has your Mod role?', config, 'modroleid').then(() => finish(config, logger , fs)))))))))));
+    ask('Which ID has your Friends role?', config, 'friendsroleid').then(() =>
+    ask('Which ID has your Mod role?', config, 'modroleid').then(() => finish(config, logger , fs))))))))))));
 }
 
 function finish(config, logger, fs) {
@@ -30,6 +31,7 @@ function finish(config, logger, fs) {
   config.xprate_voice = Math.round(config.xpvalue / 3);
   config.coinrate_text = 10;
   config.coinrate_voice = 50;
+  config.xptext_cooldown = 30;
   fs.writeFileSync('config.json', JSON.stringify(config));
   console.log('')
   console.log('Setup is completed please restart KuramaSenpai to get started!');
